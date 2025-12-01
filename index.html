@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Camsi — Camisetas Deportivas</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <img class="logo" src="logocamsi.png" alt="Compra" data-page="compra">
+      <span class="brand">Camsi</span>
+    </div>
+
+    <nav class="nav-menu">
+      <a class="nav-btn active" data-page="inicio">INICIO</a>
+      <a class="nav-btn" data-page="camisetas">CAMISETAS</a>
+      <a class="nav-btn" data-page="ofertas">OFERTAS</a>
+      <a class="nav-btn" data-page="contactos">CONTACTOS</a>
+      <a class="nav-btn" data-page="buscar">BUSCAR</a>
+    </nav>
+
+    <button class="nav-btn" data-page="carrito"><img src="logo de compra.png" alt="" width="20"></button>
+  </header>
+
+  <!--SECCIÓN: INICIO -->
+  <section class="page visible" id="inicio">
+    <!-- HERO ORIGINAL -->
+    <section class="hero">
+      <div class="hero-content">
+        <span class="badge">Nueva Temporada 2025/26</span>
+
+        <h1>
+          Las Mejores <span class="resaltado">Camisetas</span> del Futbol
+        </h1>
+
+        <p class="hero-text">
+          Descubre nuestra colección exclusiva de camisetas de los mejores equipos del mundo.
+          Calidad premium y entrega garantizada
+        </p>
+
+        <div class="hero-buttons">
+          <a class="btn btn-red" data-page="camisetas">Ver Catálogo</a>
+          <a class="btn btn-white" data-page="ofertas">Ofertas Especiales</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCTOS INICIO -->
+    <section class="productos">
+      <h2>Nuestra Colección</h2>
+      <p class="sub">Explora las camisetas más icónicas de los mejores clubes y paises del mundo</p>
+
+      <div class="grid-productos">
+
+        <div class="card">
+          <img src="img1.jpg">
+          <div class="card-body">
+            <h3>FC Barcelona</h3>
+            <span class="tipo">Camiseta Popular del Barca</span>
+
+            <div class="precio">
+              <span class="actual">$89.99</span>
+              <span class="viejo">$110.00</span>
+            </div>
+            <select class='talla-select'>
+              <option>Seleccionar Talla</option>
+              <option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+            <button class="btn-add">Añadir al Carrito</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="img2.jpg">
+          <div class="card-body">
+            <h3>Real Madrid</h3>
+            <span class="tipo">Camiseta Popular del Madrid</span>
+
+            <div class="precio">
+              <span class="actual">$94.99</span>
+              <span class="viejo">$120.00</span>
+            </div>
+            <select class='talla-select'>
+              <option>Seleccionar Talla</option>
+              <option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+            <button class="btn-add">Añadir al Carrito</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="img3.jpg">
+          <div class="card-body">
+            <h3>Manchester United</h3>
+            <span class="tipo">Camiseta Popular del Manchester</span>
+
+            <div class="precio">
+              <span class="actual">$99.99</span>
+              <span class="viejo">$130.00</span>
+            </div>
+            <select class='talla-select'>
+              <option>Seleccionar Talla</option>
+              <option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+            <button class="btn-add">Añadir al Carrito</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="img4.jpg">
+          <div class="card-body">
+            <h3>Club Bolivar</h3>
+            <span class="tipo">Camiseta Actual de la AKD</span>
+
+            <div class="precio">
+              <span class="actual">$99.99</span>
+              <span class="viejo">$130.00</span>
+            </div>
+            <select class='talla-select'>
+              <option>Seleccionar Talla</option>
+              <option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+            <button class="btn-add">Añadir al Carrito</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <img src="img5.jpg">
+          <div class="card-body">
+            <h3>The Stronger</h3>
+            <span class="tipo">Camiseta Actual del Gualdinegro</span>
+
+            <div class="precio">
+              <span class="actual">$99.99</span>
+              <span class="viejo">$130.00</span>
+            </div>
+            <select class='talla-select'>
+              <option>Seleccionar Talla</option>
+              <option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+            <button class="btn-add">Añadir al Carrito</button>
+          </div>
+        </div>
+        <div class="card">
+          <img src="img6.jpg">
+          <div class="card-body">
+            <h3>Bolivia</h3>
+            <span class="tipo">Camiseta Actual de la Verde</span>
+
+            <div class="precio">
+              <span class="actual">$99.99</span>
+              <span class="viejo">$130.00</span>
+            </div>
+            <select class='talla-select'>
+              <option>Seleccionar Talla</option>
+              <option>S</option><option>M</option><option>L</option><option>XL</option>
+            </select>
+            <button class="btn-add">Añadir al Carrito</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </section>
+
+  <!--SECCIÓN: CAMISETAS -->
+<section class="page" id="camisetas">
+  <h1>Catálogo de Camisetas</h1>
+  <div class="catalogo-container">
+
+    <aside class="sidebar">
+      <button class="sidebar-toggle" onclick="document.getElementById('clubes-list').classList.toggle('hidden')">Clubes Destacados</button>
+      <ul id="clubes-list" class="hidden">
+        <li><button class="item-btn">Club Bolívar</button></li>
+        <li><button class="item-btn">The Strongest</button></li>
+        <li><button class="item-btn">FC Barcelona</button></li>
+        <li><button class="item-btn">Real Madrid</button></li>
+        <li><button class="item-btn">PSG</button></li>
+        <li><button class="item-btn">Manchester United</button></li>
+        <li><button class="item-btn">Manchester City</button></li>
+        <li><button class="item-btn">AC Milan</button></li>
+        <li><button class="item-btn">Liverpool</button></li>
+        <li><button class="item-btn">Chelsea</button></li>
+      </ul>
+
+      <button class="sidebar-toggle" onclick="document.getElementById('paises-list').classList.toggle('hidden')">Países Mundial 2026</button>
+      <ul id="paises-list" class="hidden">
+        <li><button class="item-btn">Bolivia</button></li>
+        <li><button class="item-btn">España</button></li>
+        <li><button class="item-btn">Argentina</button></li>
+        <li><button class="item-btn">Portugal</button></li>
+        <li><button class="item-btn">Francia</button></li>
+        <li><button class="item-btn">Inglaterra</button></li>
+        <li><button class="item-btn">Brasil</button></li>
+        <li><button class="item-btn">Holanda</button></li>
+        <li><button class="item-btn">Colombia</button></li>
+      </ul>
+    </aside>
+    <div class="camisetas-grid" id="camisetas-grid">
+      <!-- El contenido vi una nueva forma de hacerlo mediante javascript -->
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓN: OFERTAS -->
+<section class="page" id="ofertas">
+  <h1> Ofertas Especiales</h1>
+  <p>Aprovecha descuentos limitados antes de que se agoten </p>
+
+  <div class="grid-productos">
+
+    <div class="card oferta">
+      <img src="img1.jpg">
+      <div class="card-body">
+        <h3>Barcelona Edición Especial</h3>
+        <span class="tipo">Temporada 25/26</span>
+        <div class="precio">
+          <span class="actual">$69.99</span>
+          <span class="viejo">$110.00</span>
+        </div>
+        <select>
+          <option>Talla</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+        </select>
+        <button class="btn-add">Añadir al Carrito</button>
+      </div>
+    </div>
+
+    <div class="card oferta">
+      <img src="img2.jpg">
+      <div class="card-body">
+        <h3>Real Madrid Tercera</h3>
+        <span class="tipo">Temporada 25/26</span>
+        <div class="precio">
+          <span class="actual">$74.99</span>
+          <span class="viejo">$125.00</span>
+        </div>
+        <select>
+          <option>Talla</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+        </select>
+        <button class="btn-add">Añadir al Carrito</button>
+      </div>
+    </div>
+
+    <div class="card oferta">
+      <img src="img4.jpg">
+      <div class="card-body">
+        <h3>Club Bolívar Edición Limitada</h3>
+        <span class="tipo">Bolivia</span>
+        <div class="precio">
+          <span class="actual">$79.99</span>
+          <span class="viejo">$130.00</span>
+        </div>
+        <select>
+          <option>Talla</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+        </select>
+        <button class="btn-add">Añadir al Carrito</button>
+      </div>
+    </div>
+
+    <div class="card oferta">
+      <img src="img5.jpg">
+      <div class="card-body">
+        <h3>The Strongest 2025</h3>
+        <span class="tipo">Bolivia</span>
+        <div class="precio">
+          <span class="actual">$79.99</span>
+          <span class="viejo">$130.00</span>
+        </div>
+        <select>
+          <option>Talla</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+        </select>
+        <button class="btn-add">Añadir al Carrito</button>
+      </div>
+    </div>
+
+    <div class="card oferta">
+      <img src="img4.jpg">
+      <div class="card-body">
+        <h3>AC Milan Edición Especial</h3>
+        <span class="tipo">Temporada 25/26</span>
+        <div class="precio">
+          <span class="actual">$69.99</span>
+          <span class="viejo">$110.00</span>
+        </div>
+        <select>
+          <option>Talla</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+        </select>
+        <button class="btn-add">Añadir al Carrito</button>
+      </div>
+    </div>
+
+    <div class="card oferta">
+      <img src="img6.jpg">
+      <div class="card-body">
+        <h3>Argentina Edición Especial</h3>
+        <span class="tipo">Temporada 25/26</span>
+        <div class="precio">
+          <span class="actual">$69.99</span>
+          <span class="viejo">$110.00</span>
+        </div>
+        <select>
+          <option>Talla</option><option>S</option><option>M</option><option>L</option><option>XL</option>
+        </select>
+        <button class="btn-add">Añadir al Carrito</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECCIÓN: CONTACTOS -->
+<section class="page" id="contactos">
+  <h1>Contáctanos</h1>
+  <p>Estamos aquí para ayudarte. Envíanos un mensaje o usa nuestras redes</p>
+
+  <div class="contact-container">
+
+    <form class="contact-form">
+      <label>Nombre Completo</label>
+      <input type="text" placeholder="Escribe tu nombre">
+
+      <label>Correo Electrónico</label>
+      <input type="email" placeholder="tucorreo@gmail.com">
+
+      <label>Mensaje</label>
+      <textarea placeholder="Escribe tu mensaje aquí..."></textarea>
+
+      <button type="submit" class="btn btn-red">Enviar Mensaje</button>
+    </form>
+
+    <div class="info-contacto">
+      <h3>Información de la Tienda</h3>
+      <p><strong>Dirección:</strong> Av. Siempre Viva #123, La Paz - Bolivia</p>
+      <p><strong>WhatsApp:</strong> +591 70000000</p>
+      <p><strong>Email:</strong> soporte@camsi.com</p>
+      <p><strong>Horarios:</strong> Lunes a Viernes — 9:00 a 18:00</p>
+
+      <h3>Redes Sociales</h3>
+      <ul class="redes">
+        <li>Instagram: @camsi_oficial</li>
+        <li>Facebook: CAMSI Store</li>
+        <li>TikTok: @camsi.tienda</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+
+  <!--SECCIÓN: BUSCAR -->
+<section class="page" id="buscar">
+  <h1>Estoy en BUSCAR</h1>
+  <p>Pronto podrás encontrar tu camiseta favorita aquí</p>
+</section>
+
+  <!--SECCIÓN: CARRITO -->
+<section class="page" id="carrito">
+  <h1>Estoy en el CARRITO</h1>
+  <p>Aquí verás los productos añadidos próximamente</p>
+</section>
+
+  <script src="script.js"></script>
+</body>
+</html>
