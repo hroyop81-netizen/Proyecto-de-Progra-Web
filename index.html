@@ -1100,7 +1100,7 @@
                     <div class="tarjeta-producto" data-id="20" data-filtro="madrid">
                         <img src="madrid-3.jpg" alt="Real Madrid Home">
                         <div class="info-producto">
-                            <h3 class="nombre-producto">Real Madrid Home</h3>
+                            <h3 class="nombre-producto">Real Madrid 90s</h3>
                             <span class="tipo-producto">Temporada 25/26</span>
                             <div class="contenedor-precio">
                                 <span class="precio-actual" data-precio="99.99">$99.99</span>
@@ -1957,6 +1957,128 @@
             calcularTotal();
         }
 
+        // --- FUNCIONES DE BÚSQUEDA Y FILTRO ---
+        
+        function obtenerTodosLosProductos() {
+            const productos = [];
+            // Recorre todas las tarjetas de producto en todas las secciones para capturar el inventario completo
+            document.querySelectorAll('.tarjeta-producto').forEach(tarjeta => {
+                const id = tarjeta.getAttribute('data-id');
+                
+                if (!productos.some(p => p.id === id)) {
+                     // Obtener el precio anterior de forma segura
+                    let precioAnterior = '';
+                    const precioAnteriorElement = tarjeta.querySelector('.precio-anterior');
+                    if (precioAnteriorElement) {
+                        precioAnterior = precioAnteriorElement.textContent;
+                    }
+                    
+                     productos.push({
+                        id: id,
+                        nombre: tarjeta.querySelector('.nombre-producto').textContent,
+                        tipo: tarjeta.querySelector('.tipo-producto').textContent,
+                        precio: tarjeta.querySelector('.precio-actual').getAttribute('data-precio'),
+                        precioFormato: tarjeta.querySelector('.precio-actual').textContent,
+                        precioAnterior: precioAnterior,
+                        imagen: tarjeta.querySelector('img').getAttribute('src'),
+                        filtro: tarjeta.getAttribute('data-filtro')
+                    });
+                }
+            });
+            return productos;
+        }
+
+        function buscarProductos() {
+            const termino = campoBusqueda.value.toLowerCase().trim();
+            resultadosBusqueda.innerHTML = '';
+            
+            const productosAMostrar = todosLosProductos.filter(producto => {
+                return producto.nombre.toLowerCase().includes(termino) ||
+                       producto.tipo.toLowerCase().includes(termino) ||
+                       (producto.filtro && producto.filtro.toLowerCase().includes(termino));
+            });
+
+            if (termino.length < 2 || productosAMostrar.length === 0) {
+                resultadosBusqueda.innerHTML = `<p id="mensaje-busqueda" style="grid-column: 1 / -1; text-align: center; color: var(--color-texto-gris);">${termino.length < 2 ? 'Introduce un término de búsqueda para comenzar.' : 'No se encontraron resultados para "' + termino + '".'}</p>`;
+                return;
+            }
+
+            productosAMostrar.forEach(producto => {
+                resultadosBusqueda.appendChild(crearTarjetaProducto(producto));
+            });
+            
+            // Re-asigna listeners a los nuevos botones de carrito
+            asignarListenersCarrito();
+        }
+        
+        // Helper: Crea una tarjeta de producto a partir de un objeto JS (usada en la función de búsqueda)
+        function crearTarjetaProducto(producto) {
+            const tarjeta = document.createElement('div');
+            tarjeta.classList.add('tarjeta-producto');
+            tarjeta.setAttribute('data-id', producto.id);
+            tarjeta.setAttribute('data-filtro', producto.filtro || '');
+            
+            if (producto.tipo.toLowerCase().includes('oferta')) {
+                tarjeta.classList.add('oferta');
+            }
+            
+            tarjeta.innerHTML = `
+                <img src="${producto.imagen}" alt="Camiseta ${producto.nombre}">
+                <div class="info-producto">
+                    <h3 class="nombre-producto">${producto.nombre}</h3>
+                    <span class="tipo-producto">${producto.tipo}</span>
+                    <div class="contenedor-precio">
+                        <span class="precio-actual" data-precio="${producto.precio}">$${parseFloat(producto.precio).toFixed(2)}</span>
+                        ${producto.precioAnterior ? `<span class="precio-anterior">${producto.precioAnterior}</span>` : ''}
+                    </div>
+                    <select class="selector-talla">
+                        <option value="">Seleccionar Talla</option>
+                        <option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option>
+                    </select>
+                    <button class="boton-agregar-carrito" data-id="${producto.id}">Añadir al Carrito</button>
+                </div>
+            `;
+            return tarjeta;
+        }
+
+        // Muestra solo los 6 productos iniciales del Catálogo
+        function mostrarProductosInicialesDelCatalogo() {
+            const grid = document.getElementById('camisetas-grid');
+            if (!grid) return;
+            
+            const productos = grid.querySelectorAll('.tarjeta-producto');
+            productos.forEach(producto => {
+                const id = producto.getAttribute('data-id');
+                
+                if (IDS_INICIALES.includes(id)) {
+                    producto.style.display = 'block';
+                } else {
+                    producto.style.display = 'none';
+                }
+            });
+        }
+
+
+        function filtrarProductos(filtro) {
+            const grid = document.getElementById('camisetas-grid');
+            const productos = grid.querySelectorAll('.tarjeta-producto');
+            
+            productos.forEach(producto => {
+                const productoFiltro = producto.getAttribute('data-filtro');
+                
+                // Muestra solo si coincide con el filtro, oculta el resto.
+                if (productoFiltro === filtro) {
+                    producto.style.display = 'block';
+                } else {
+                    producto.style.display = 'none';
+                }
+            });
+            
+            // Si el filtro no tiene resultados (por si se intenta filtrar un ID inicial), 
+            // no hace falta un manejo especial ya que el usuario querría ver los resultados del filtro.
+        }
+        
+        
         
     </script>
 
