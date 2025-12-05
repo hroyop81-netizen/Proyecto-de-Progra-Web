@@ -1,8 +1,11 @@
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camsi — Camisetas Deportivas</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
             --color-principal: #AA0101;
@@ -14,6 +17,7 @@
             --ancho-maximo-desktop: 1200px; 
             --color-principal-hover: #8B0000; 
             --color-sombra-sutil: rgba(170, 1, 1, 0.4);
+            --color-eliminar: #CC0000;
         }
 
         * {
@@ -28,8 +32,18 @@
             min-height: 100vh;
             overflow-x: hidden;
             padding-top: 60px;
-            background: linear-gradient(to bottom, #440000 0%, var(--color-fondo-oscuro) 40%);
+            background: linear-gradient(to bottom, #440000 0%, var(--color-fondo-oscuro) 40%, var(--color-fondo-oscuro) 100%);
         }
+
+        /* --- FUNCIONALIDAD SPA --- */
+        .pagina {
+            display: none; 
+        }
+
+        .pagina.visible {
+            display: block; 
+        }
+        /* --- FIN FUNCIONALIDAD SPA --- */
 
         a {
             text-decoration: none;
@@ -41,6 +55,13 @@
             margin: 0 auto;
             padding: 0 15px;
         }
+
+        /* --- CENTRADO GENERAL DE TEXTOS Y ACCIONES PRINCIPALES --- */
+        h1, h2, .subtitulo, .texto-principales, .etiqueta-principales, 
+        .acciones-carrito p, .acciones-carrito a, .contenedor-busqueda h2 {
+            text-align: center !important; 
+        }
+        /* --- FIN CENTRADO --- */
 
         .barra-navegacion {
             display: flex;
@@ -82,19 +103,9 @@
             transition: color 0.3s;
         }
 
-        .menu-navegacion a:hover {
+        .menu-navegacion a:hover,
+        .menu-navegacion a.enlace-activo {
             color: var(--color-principal);
-        }
-
-        .boton-carrito {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 10px;
-        }
-
-        .boton-carrito{
-            filter: invert(1); /* Asegura que el ícono de compra sea blanco */
         }
 
         .acciones-header {
@@ -103,13 +114,39 @@
             gap: 15px;
         }
 
+        .contenedor-carrito-icono {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
         .boton-carrito {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 10px;
             font-size: 1.5rem;
             color: var(--color-texto-claro);
+            filter: invert(1);
+        }
+
+        #contador-carrito {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: var(--color-principal);
+            color: var(--color-texto-claro);
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            line-height: 1;
+            transform: translate(50%, -50%);
+            z-index: 10;
         }
 
         .menu-toggle {
-            display: none;
+            display: none; 
             background: none;
             border: none;
             cursor: pointer;
@@ -127,7 +164,6 @@
         }
 
         .menu-movil {
-            display: none;
             background-color: var(--color-fondo-oscuro);
             position: fixed;
             top: 60px;
@@ -137,10 +173,12 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             transition: transform 0.3s ease-in-out;
             transform: translateY(-100%);
+            visibility: hidden; 
         }
 
         .menu-movil.mostrar {
             transform: translateY(0);
+            visibility: visible; 
         }
 
         .menu-movil a {
@@ -153,7 +191,8 @@
             font-weight: 600;
         }
 
-        .menu-movil a:hover {
+        .menu-movil a:hover,
+        .menu-movil a.enlace-activo {
             background-color: #1a1a1a;
             color: var(--color-principal);
         }
@@ -167,15 +206,6 @@
         .contenido-principal {
             max-width: 600px;
             margin: 0 auto;
-            text-align: center;
-        }
-
-        .etiqueta-principales {
-            display: block;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--color-texto-claro);
-            margin-bottom: 10px;
         }
 
         h1 {
@@ -187,13 +217,7 @@
         }
 
         .texto-resaltado {
-            color: red;
-        }
-
-        .texto-principales {
-            color: var(--color-texto-claro);
-            font-size: 1rem;
-            margin-bottom: 30px;
+            color: var(--color-principal);
         }
 
         .botones-principales {
@@ -203,56 +227,88 @@
             align-items: center;
         }
 
+        /* --- ESTILOS DE BOTONES --- */
         .boton-rojo, .boton-blanco, .boton-agregar-carrito {
             padding: 12px 25px;
             border-radius: 5px;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s, color 0.3s, transform 0.2s;
+            transition: background-color 0.3s, color 0.3s, transform 0.2s, box-shadow 0.3s;
             border: none;
             text-align: center;
             display: inline-block;
         }
+
+        .boton-rojo {
+            background-color: var(--color-principal);
+            color: var(--color-texto-claro);
+        }
+        .boton-rojo:hover {
+            background-color: var(--color-principal-hover);
+            box-shadow: 0 4px 8px var(--color-sombra-sutil);
+            transform: translateY(-2px);
+        }
+        .boton-blanco {
+            background-color: var(--color-texto-claro);
+            color: var(--color-fondo-oscuro);
+            border: 1px solid var(--color-fondo-oscuro);
+        }
+        .boton-blanco:hover {
+            background-color: #f0f0f0;
+            color: var(--color-principal);
+            transform: translateY(-2px);
+        }
+        .boton-agregar-carrito {
+            background-color: var(--color-principal);
+            color: var(--color-texto-claro);
+            width: 100%;
+            margin-top: 10px;
+        }
+        .boton-agregar-carrito:hover {
+            background-color: var(--color-principal-hover);
+            box-shadow: 0 2px 5px var(--color-sombra-sutil);
+        }
+        /* --- FIN ESTILOS DE BOTONES --- */
 
         .boton-rojo, .boton-blanco {
             width: 100%;
             max-width: 250px;
         }
 
-        .boton-rojo {
-            background-color: var(--color-texto-claro);
-            color: var(--color-principal);
-        }
-
-        .boton-rojo:hover {
-            background-color: #f0f0f0;
-        }
-
-        .boton-blanco {
-            background-color: transparent;
-            color: var(--color-texto-claro);
-            border: 2px solid var(--color-texto-claro);
-        }
-
-        .boton-blanco:hover {
-            background-color: var(--color-texto-claro);
-            color: var(--color-principal);
-            border-color: var(--color-texto-claro);
-        }
-
         h2, h1 {
-            text-align: center;
             margin-top: 50px;
             color: var(--color-texto-claro);
         }
 
         .subtitulo {
-            text-align: center;
             color: var(--color-texto-gris);
             margin-bottom: 30px;
         }
 
-        .grid-productos, .grid-catalogo {
+        /* --- MEJORA SELECTOR DE TALLA --- */
+        .selector-talla {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            background-color: #333; 
+            color: var(--color-texto-claro);
+            border: 1px solid var(--color-principal); 
+            font-size: 0.9rem;
+            cursor: pointer;
+            appearance: none; 
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4L146.2%20206.8%205.4%2069.4c-1.8-2.6-4.6-4.1-7.4-4.1s-5.6%201.5-7.4%204.1c-1.8%202.6-1.8%206.1%200%208.7l141%20165.5c1.9%202.4%204.7%203.8%207.6%203.8s5.7-1.4%207.6-3.8l141-165.5c1.8-2.6%201.8-6.1%200-8.7c-3.6-5.2-11-5.2-14.6%200z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 10px auto;
+        }
+        .selector-talla option {
+            background-color: var(--color-fondo-oscuro); 
+        }
+        /* --- FIN SELECTOR DE TALLA --- */
+
+        /* GRIDS COMPARTIDOS (Home, Ofertas, Búsqueda) - Mantiene auto-fit (3-4 columnas) */
+        .grid-productos, #resultados-busqueda {
             display: grid;
             gap: 20px;
             padding-bottom: 50px;
@@ -260,23 +316,27 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
         }
 
+        /* Estilo general para todos los productos */
         .tarjeta-producto {
             background-color: var(--color-fondo-tarjeta);
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-            transition: transform 0.3s;
-            border: 1px solid #333;
+            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+            border: 1px solid #444; /* Borde más sutil */
         }
 
         .tarjeta-producto:hover {
             transform: translateY(-5px);
+            border-color: var(--color-principal); 
             box-shadow: 0 8px 15px rgba(170, 1, 1, 0.5);
         }
 
+        /* Estilo Desktop */
         .tarjeta-producto img {
             width: 100%;
-            height: auto;
+            height: 300px; 
+            object-fit: cover; 
             display: block;
         }
 
@@ -285,35 +345,39 @@
             text-align: left;
         }
 
+        .info-producto h3 {
+             margin-bottom: 5px;
+        }
+        .info-producto span {
+            display: block;
+            color: var(--color-texto-gris);
+            font-size: 0.9rem;
+        }
+        .contenedor-precio {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
         .precio-actual {
+            font-size: 1.2rem;
+            font-weight: 700;
             color: var(--color-principal);
         }
-
-        .selector-talla {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #333333;
-            color: var(--color-texto-claro);
-            border: 1px solid #555;
-            border-radius: 5px;
+        .precio-anterior {
+            text-decoration: line-through;
+            color: var(--color-texto-gris);
+            font-size: 0.9rem;
         }
 
-        .boton-agregar-carrito {
-            width: 100%;
-            background-color: var(--color-principal);
-            color: var(--color-texto-claro);
-            font-weight: 700;
-        }
 
-        .boton-agregar-carrito:hover {
-            background-color: #8B0000;
-        }
-
+        /* Estilos de Catálogo (Filtros + Grid) */
         .contenedor-catalogo {
-            display: flexbox;
+            display: flex;
             gap: 20px;
             padding-bottom: 50px;
+            align-items: flex-start;
+            margin-top: 30px;
         }
 
         .barra-filtros {
@@ -322,186 +386,269 @@
             background-color: var(--color-fondo-tarjeta);
             padding: 20px;
             border-radius: 10px;
-            display: flex;
+            display: block;
+            border: 1px solid #444;
+        }
+        
+        /* FUERZA 2 COLUMNAS EN DESKTOP PARA EL CATÁLOGO */
+        .grid-catalogo {
+            display: grid;
+            gap: 20px;
+            margin-top: 0; 
+            flex-grow: 1; 
+            grid-template-columns: repeat(2, 1fr); 
         }
 
         .barra-filtros button {
             background-color: var(--color-principal);
-        }
-
-        .contenedor-contacto {
-            display: flex;
-            flex-direction: row;
-            gap: 40px;
-            margin: 60px auto 100px auto;
-            padding: 0 20px;
-            max-width: 1400px;
-            flex-wrap: wrap;
-        }
-
-        .formulario-contacto {
-            flex: 2;
-            min-width: 300px;
-        }
-
-        .info-tienda {
-            flex: 1;
-            min-width: 250px;
-            background-color: var(--color-fondo-tarjeta);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            align-self: flex-start;
-        }
-
-        .info-tienda h3 {
-            color: var(--color-principal);
-            border-bottom: 2px solid var(--color-principal-hover);
-            padding-bottom: 10px;
-            margin-top: 0;
-            margin-bottom: 25px;
-        }
-
-        .campo-formulario {
-            margin-bottom: 20px;
-        }
-
-        .campo-formulario label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
             color: var(--color-texto-claro);
-        }
-
-        .formulario-contacto input, .formulario-contacto textarea {
+            padding: 10px;
             width: 100%;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 1px solid #444;
-            background-color: #262626;
-            color: var(--color-texto-claro);
-            font-size: 1rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .formulario-contacto input:focus, .formulario-contacto textarea:focus {
-            outline: none;
-            border-color: var(--color-principal);
-            box-shadow: 0 0 0 3px var(--color-sombra-sutil);
-        }
-
-        .formulario-contacto textarea {
-            resize: vertical;
-            min-height: 150px;
-        }
-
-        .boton-enviar {
-            width: 100%;
-            padding: 15px;
             border: none;
-            border-radius: 8px;
+            border-radius: 5px;
+            margin-bottom: 5px;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 18px;
-            color: var(--color-fondo-principal);
-            background-color: var(--color-principal);
-            transition: background-color 0.2s ease, transform 0.1s ease;
+            font-weight: 600;
+            text-align: left;
+            transition: background-color 0.3s;
         }
 
-        .boton-enviar:hover {
+        .barra-filtros button:hover {
             background-color: var(--color-principal-hover);
-            transform: translateY(-2px);
+        }
+        
+        .barra-filtros ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 20px;
+            display: none; 
         }
 
-        .contacto-item {
+        .barra-filtros ul button {
+            background: none;
+            color: var(--color-texto-gris);
+            text-align: left;
+            padding: 5px 10px;
+            margin-bottom: 0;
+            font-weight: 400;
+        }
+        .barra-filtros ul button:hover {
+            color: var(--color-principal);
+            background-color: #333;
+        }
+
+
+        /* Estilos de Carrito */
+        #lista-carrito {
+            list-style: none;
+            padding: 0;
+        }
+        .item-carrito {
             display: flex;
             align-items: center;
-            margin-bottom: 15px;
-            color: var(--color-texto-secundario);
+            justify-content: space-between;
+            background-color: var(--color-fondo-tarjeta);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 5px solid var(--color-principal);
         }
-
-        .contacto-item svg {
-            fill: var(--color-principal);
-            width: 20px;
-            height: 20px;
-            margin-right: 15px;
-            flex-shrink: 0;
+        .info-item {
+            display: flex;
+            flex-direction: column;
         }
-
-        .contacto-item a {
-            color: var(--color-texto-claro);
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .contacto-item a:hover {
-            color: var(--color-principal);
-        }
-
-        .pie-pagina {
-            text-align: center;
-            padding: 20px;
-            border-top: 1px solid #1a1a1a;
+        .info-item span {
+            font-size: 0.9rem;
             color: var(--color-texto-gris);
         }
 
-        @media (min-width: 0px) and (max-width: 991px) {
-            .seccion-principal {
-                padding: 80px 40px;
-            }
-            .contenido-principal {
-                text-align: center;
-            }
-            .botones-principales {
-                flex-direction: row;
-                justify-content: center;
-            }
-            .boton-rojo, .boton-blanco {
-                width: auto;
-                max-width: none;
-            }
-            h1 {
-                font-size: 3rem;
-            }
+        .boton-eliminar-uno {
+            background-color: var(--color-eliminar);
+            color: var(--color-texto-claro);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 20px;
+            transition: background-color 0.2s;
+        }
+        .boton-eliminar-uno:hover {
+            background-color: #A00000;
+        }
+        
+        .acciones-carrito {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        #vaciar-carrito {
+             background: none;
+             border: 1px solid var(--color-texto-gris);
+             color: var(--color-texto-gris);
+             padding: 10px 20px;
+             border-radius: 5px;
+             cursor: pointer;
+             transition: all 0.3s;
+        }
+        #vaciar-carrito:hover {
+            border-color: var(--color-principal);
+            color: var(--color-principal);
+        }
+
+        /* Estilos de Contacto */
+        .contenedor-contacto {
+            display: flex;
+            gap: 40px;
+            margin-top: 30px;
+            background-color: var(--color-fondo-tarjeta);
+            padding: 30px;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+        .formulario-contacto {
+            flex-basis: 60%;
+        }
+        .info-tienda {
+            flex-basis: 40%;
+        }
+        .campo-formulario {
+            margin-bottom: 15px;
+        }
+        .campo-formulario label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        .campo-formulario input[type="text"],
+        .campo-formulario input[type="email"],
+        .campo-formulario textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: var(--color-texto-claro);
+        }
+        .campo-formulario textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .info-tienda h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            text-align: left !important;
+        }
+        .info-tienda p {
+            margin-bottom: 10px;
+            text-align: left !important;
+        }
+        .info-tienda .redes-sociales {
+            list-style: none;
+            padding: 0;
+            margin-top: 10px;
+            text-align: left !important;
+        }
+        .info-tienda .redes-sociales li {
+            margin-bottom: 5px;
+            color: var(--color-texto-gris);
+        }
+
+        /* Estilos de Búsqueda */
+        .contenedor-busqueda {
+            max-width: 800px;
+            margin: 0 auto 50px auto;
+        }
+        #campo-busqueda {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            background-color: #333;
+            color: var(--color-texto-claro);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        /* --- ESTILO DEL FOOTER --- */
+        .pie-pagina {
+            /* Ocupa todo el ancho de la ventana */
+            width: 100%;
+            /* Fondo oscuro usando la variable */
+            background-color: var(--color-fondo-oscuro); 
+            /* Color de texto gris suave para la información secundaria */
+            color: var(--color-texto-gris);
+            /* Relleno superior e inferior */
+            padding: 30px 15px; 
+            /* Todo el texto centrado */
+            text-align: center;
+            /* Borde sutil superior para separarlo del contenido */
+            border-top: 1px solid #333;
+            /* Espacio superior para alejarlo del contenido principal */
+            margin-top: 0px; 
+            /* Fuente ligeramente más pequeña */
+            font-size: 0.9rem;
+        }
+
+        .pie-pagina p {
+            /* Pequeño margen vertical entre líneas */
+            margin: 5px 0;
+        }
+
+        .pie-pagina p:first-child {
+            /* Destaca el texto de derechos de autor con el color claro */
+            font-weight: 600;
+            color: var(--color-texto-claro);
+            margin-bottom: 10px;
+        }
+        /* --- MEDIA QUERIES MEJORADAS (TABLET Y MÓVIL) --- */
+
+        @media (max-width: 991px) {
+            
+            /* Navegación y Header */
             .menu-navegacion {
-                display: none;
-            }
-            .grid-productos, .grid-catalogo {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .contenedor-contacto {
-                flex-direction: row;
-                gap: 20px;
-            }
-            .formulario-contacto {
-                flex-basis: 60%;
-            }
-            .info-tienda {
-                flex-basis: 40%;
-            }
-            .barra-filtros {
-                display: block;
+                display: none; 
             }
             .menu-toggle{
-              display: block;
+              display: block; 
+            }
+
+            /* Tablet: 2 columnas */
+            .grid-productos, .grid-catalogo, #resultados-busqueda {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            /* Barra Lateral del Catálogo */
+            .contenedor-catalogo {
+                flex-direction: column; 
+            }
+            .barra-filtros {
+                width: 100%; 
+            }
+            .grid-catalogo {
+                 margin-top: 30px;
+                 flex-grow: 1; 
+            }
+            
+            /* Contacto */
+            .contenedor-contacto {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .info-tienda h3, .info-tienda p, .info-tienda .redes-sociales {
+                 text-align: left !important; 
             }
         }
 
         @media (max-width: 599px) {
-            .seccion-principal {
-                padding: 60px 15px;
-            }
-            .menu-toggle{
-              display: block;
-            }
-            .contenido-principal {
-                text-align: center;
-            }
+            
+            /* Contenido Principal */
             h1 {
-                font-size: 2.5rem;
+                font-size: 2rem;
             }
             .botones-principales {
-                flex-direction: column;
+                flex-direction: column; 
                 justify-content: center;
                 align-items: center;
             }
@@ -509,11 +656,75 @@
                 width: 100%;
                 max-width: 250px;
             }
-            .grid-productos, .grid-catalogo {
+            
+            /* MÓVIL: 1 columna para el grid principal */
+            .grid-productos, .grid-catalogo, #resultados-busqueda {
                 grid-template-columns: 1fr;
             }
-            .contenedor-contacto {
+            
+            /* MÓVIL: LAYOUT DE TARJETA DE PRODUCTO (Imagen Izq - Detalles Der) */
+            .tarjeta-producto {
+                display: flex;
+                flex-direction: row;
+                align-items: stretch; /* Estira la sección de info */
+                gap: 10px;
+                padding: 10px;
+            }
+
+            .tarjeta-producto img {
+                width: 40%; 
+                height: 150px; 
+                flex-shrink: 0; 
+                border-radius: 8px; 
+            }
+            
+            .info-producto {
+                flex-grow: 1; 
+                padding: 0 5px 0 0;
+                display: flex;
                 flex-direction: column;
+                justify-content: space-between;
+                font-size: 0.9rem;
+            }
+            
+            .info-producto h3 {
+                font-size: 1rem;
+                margin-top: 0;
+                margin-bottom: 2px;
+            }
+
+            .info-producto span, .contenedor-precio {
+                 margin-bottom: 2px;
+            }
+
+            .precio-actual {
+                font-size: 1.1rem;
+            }
+            
+            .precio-anterior {
+                display: none; 
+            }
+            
+            .selector-talla, .boton-agregar-carrito {
+                font-size: 0.8rem;
+                padding: 6px 8px;
+                margin-top: 5px;
+            }
+            
+            .boton-agregar-carrito {
+                margin-top: auto; 
+            }
+
+            .item-carrito {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .boton-eliminar-uno {
+                margin-top: 10px;
+                margin-left: 0;
+            }
+            .acciones-carrito {
+                justify-content: space-between;
             }
         }
     </style>
@@ -522,12 +733,10 @@
 
     <header class="barra-navegacion">
         <div class="zona-logo">
-            <!-- Usé un placeholder de imagen ya que el archivo 'logocamsi.png' no existe aquí -->
             <img class="logo-sitio" src="logocamsi.png" alt="Logo de Camsi" data-page="compra">
             <span class="nombre-marca">Camsi</span>
         </div>
 
-        <!-- Menú de Escritorio (Visible en Desktop) -->
         <nav class="menu-navegacion">
             <a class="enlace-activo" data-page="inicio" href="#">INICIO</a>
             <a class="enlace" data-page="camisetas" href="#">CAMISETAS</a>
@@ -536,12 +745,12 @@
             <a class="enlace" data-page="buscar" href="#">BUSCAR</a>
         </nav>
 
-        <!-- Contenedor para el carrito y la hamburguesa -->
         <div class="acciones-header">
-            <!-- Botón de Carrito (usando emoji) -->
-            <button class="boton-carrito" data-page="carrito">&#128722;</button>
+            <div class="contenedor-carrito-icono">
+                <button class="boton-carrito" data-page="carrito" aria-label="Ver Carrito">&#128722;</button>
+                <span id="contador-carrito">0</span>
+            </div>
             
-            <!-- Botón Hamburguesa (Solo visible en Móvil/Tablet) -->
             <button id="menu-toggle" class="menu-toggle" aria-expanded="false" aria-controls="menu-movil">
                 <div class="icono-hamburguesa"></div>
                 <div class="icono-hamburguesa"></div>
@@ -550,7 +759,6 @@
         </div>
     </header>
 
-    <!-- Menú Desplegable Móvil (Aparece al hacer click) -->
     <nav id="menu-movil" class="menu-movil">
         <a class="enlace-activo" data-page="inicio" href="#">INICIO</a>
         <a class="enlace" data-page="camisetas" href="#">CAMISETAS</a>
@@ -559,331 +767,993 @@
         <a class="enlace" data-page="buscar" href="#">BUSCAR</a>
     </nav>
 
-    <!-- MAIN -->
     <main>
 
-        <!-- INICIO -->
         <section class="pagina visible" id="inicio">
-
-            <!-- Contenido Principal -->
             <section class="seccion-principal">
                 <div class="contenido-principal">
-
                     <span class="etiqueta-principales">Nueva Temporada 2025/26</span>
-
                     <h1>Las Mejores <span class="texto-resaltado">Camisetas</span> del Fútbol</h1>
-
                     <p class="texto-principales">
                         Descubre nuestra colección exclusiva de camisetas premium de los mejores equipos.
                     </p>
-
                     <div class="botones-principales">
                         <a class="boton-rojo" data-page="camisetas">Ver Catálogo</a>
                         <a class="boton-blanco" data-page="ofertas">Ofertas Especiales</a>
                     </div>
-
                 </div>
             </section>
 
-            <!-- PRODUCTOS INICIO -->
             <section class="productos-inicio">
-                <h2>Nuestra Colección</h2>
-                <p class="subtitulo">Explora camisetas icónicas de clubes y selecciones</p>
-
+                <h2>Destacados</h2>
+                <p class="subtitulo">Una selección de nuestras camisetas más populares</p>
                 <div class="grid-productos">
-
-                    <div class="tarjeta-producto">
-                        <img src="barcaimagen.jpg">
-
+                    <div class="tarjeta-producto" data-id="1" data-filtro="barcelona">
+                        <img src="barcaimagen.jpg" alt="Camiseta FC Barcelona">
                         <div class="info-producto">
-                            <h3>FC Barcelona</h3>
-                            <span class="tipo-producto">Camiseta Popular del Barca</span>
-
+                            <h3 class="nombre-producto">FC Barcelona Local</h3>
+                            <span class="tipo-producto">Popular del Barca</span>
                             <div class="contenedor-precio">
-                                <span class="precio-actual">$89.99</span>
+                                <span class="precio-actual" data-precio="89.99">$89.99</span>
                                 <span class="precio-anterior">$110.00</span>
                             </div>
-
                             <select class="selector-talla">
-                                <option>Seleccionar Talla</option>
-                                <option>S</option><option>M</option><option>L</option><option>XL</option>
+                                <option value="">Seleccionar Talla</option>
+                                <option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option>
                             </select>
-                            <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                            <button class="boton-agregar-carrito" data-id="1">Añadir al Carrito</button>
                         </div>
                     </div>
 
-                    <div class="tarjeta-producto">
-                        <img src="madridimagen.jpg">
+                    <div class="tarjeta-producto" data-id="2" data-filtro="madrid">
+                        <img src="madridimagen.jpg" alt="Camiseta Real Madrid">
                         <div class="info-producto">
-                            <h3>Real Madrid</h3>
-                            <span class="tipo-producto">Camiseta Popular del Madrid</span>
-
+                            <h3 class="nombre-producto">Real Madrid Visitante</h3>
+                            <span class="tipo-producto">Popular del Madrid</span>
                             <div class="contenedor-precio">
-                                <span class="precio-actual">$94.99</span>
+                                <span class="precio-actual" data-precio="94.99">$94.99</span>
                                 <span class="precio-anterior">$120.00</span>
                             </div>
-
                             <select class="selector-talla">
-                                <option>Seleccionar Talla</option>
-                                <option>S</option><option>M</option><option>L</option><option>XL</option>
+                                <option value="">Seleccionar Talla</option>
+                                <option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option>
                             </select>
-                            <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                            <button class="boton-agregar-carrito" data-id="2">Añadir al Carrito</button>
                         </div>
                     </div>
-
-                    <div class="tarjeta-producto">
-                        <img src="manchesterunited.jpg">
+                    
+                    <div class="tarjeta-producto" data-id="3" data-filtro="manchesterunited">
+                        <img src="manchesterunited.jpg" alt="Camiseta Manchester United">
                         <div class="info-producto">
-                            <h3>Manchester United</h3>
-                            <span class="tipo-producto">Camiseta Popular del Manchester</span>
-
+                            <h3 class="nombre-producto">Manchester United Home</h3>
+                            <span class="tipo-producto">Popular del Manchester</span>
                             <div class="contenedor-precio">
-                                <span class="precio-actual">$99.99</span>
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
                                 <span class="precio-anterior">$130.00</span>
                             </div>
-
                             <select class="selector-talla">
-                                <option>Seleccionar Talla</option>
-                                <option>S</option><option>M</option><option>L</option><option>XL</option>
+                                <option value="">Seleccionar Talla</option>
+                                <option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option>
                             </select>
-                            <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                            <button class="boton-agregar-carrito" data-id="3">Añadir al Carrito</button>
                         </div>
                     </div>
-
-                    <div class="tarjeta-producto">
-                        <img src="bolivar.webp">
+                    
+                    <div class="tarjeta-producto" data-id="4" data-filtro="bolivar">
+                        <img src="bolivar.webp" alt="Camiseta Club Bolívar">
                         <div class="info-producto">
-                            <h3>Club Bolívar</h3>
+                            <h3 class="nombre-producto">Club Bolívar Local</h3>
                             <span class="tipo-producto">Camiseta Actual de la AKD</span>
-
                             <div class="contenedor-precio">
-                                <span class="precio-actual">$99.99</span>
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
                                 <span class="precio-anterior">$130.00</span>
                             </div>
-
-                            <select class="selector-talla">
-                                <option>Seleccionar Talla</option>
-                                <option>S</option><option>M</option><option>L</option><option>XL</option>
-                            </select>
-                            <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="4">Añadir al Carrito</button>
                         </div>
                     </div>
-
-                    <div class="tarjeta-producto">
-                        <img src="tigre.jpg">
+                    
+                    <div class="tarjeta-producto" data-id="5" data-filtro="strongest">
+                        <img src="tigre.jpg" alt="Camiseta The Strongest">
                         <div class="info-producto">
-                            <h3>The Strongest</h3>
+                            <h3 class="nombre-producto">The Strongest Local</h3>
                             <span class="tipo-producto">Camiseta Actual del Gualdinegro</span>
-
                             <div class="contenedor-precio">
-                                <span class="precio-actual">$99.99</span>
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
                                 <span class="precio-anterior">$130.00</span>
                             </div>
-
-                            <select class="selector-talla">
-                                <option>Seleccionar Talla</option>
-                                <option>S</option><option>M</option><option>L</option><option>XL</option>
-                            </select>
-                            <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="5">Añadir al Carrito</button>
                         </div>
                     </div>
-
-                    <div class="tarjeta-producto">
-                        <img src="bolivia.jpg">
+                    
+                    <div class="tarjeta-producto" data-id="6" data-filtro="bolivia">
+                        <img src="bolivia.jpg" alt="Camiseta Selección de Bolivia">
                         <div class="info-producto">
-                            <h3>Bolivia</h3>
-                            <span class="tipo-producto">Camiseta Actual de la Verde</span>
-
+                            <h3 class="nombre-producto">Bolivia Home 25/26</h3>
+                            <span class="tipo-producto">Camiseta de la Verde</span>
                             <div class="contenedor-precio">
-                                <span class="precio-actual">$99.99</span>
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
                                 <span class="precio-anterior">$130.00</span>
                             </div>
-
                             <select class="selector-talla">
-                                <option>Seleccionar Talla</option>
-                                <option>S</option><option>M</option><option>L</option><option>XL</option>
+                                <option value="">Seleccionar Talla</option>
+                                <option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option>
                             </select>
-                            <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                            <button class="boton-agregar-carrito" data-id="6">Añadir al Carrito</button>
                         </div>
                     </div>
-
                 </div>
             </section>
-
         </section>
 
-        <!-- CATÁLOGO -->
         <section class="pagina" id="camisetas">
             <h1>Catálogo de Camisetas</h1>
+            <p class="subtitulo">Encuentra los uniformes oficiales de tus clubes y selecciones favoritos.</p>
 
             <div class="contenedor-catalogo">
 
                 <aside class="barra-filtros">
                     <button class="boton-Clubes" onclick="toggle('lista-clubes')">Clubes Destacados</button>
 
-                    <ul id="lista-clubes" class="oculto">
-                        <li><button class="boton-filtro">Club Bolívar</button></li>
-                        <li><button class="boton-filtro">The Strongest</button></li>
-                        <li><button class="boton-filtro">FC Barcelona</button></li>
-                        <li><button class="boton-filtro">Real Madrid</button></li>
-                        <li><button class="boton-filtro">PSG</button></li>
-                        <li><button class="boton-filtro">Manchester United</button></li>
-                        <li><button class="boton-filtro">Manchester City</button></li>
-                        <li><button class="boton-filtro">AC Milan</button></li>
-                        <li><button class="boton-filtro">Liverpool</button></li>
-                        <li><button class="boton-filtro">Chelsea</button></li>
+                    <ul id="lista-clubes">
+                        <li><button class="boton-filtro" data-filtro="bolivar">Club Bolívar</button></li>
+                        <li><button class="boton-filtro" data-filtro="strongest">The Strongest</button></li>
+                        <li><button class="boton-filtro" data-filtro="barcelona">FC Barcelona</button></li>
+                        <li><button class="boton-filtro" data-filtro="madrid">Real Madrid</button></li>
+                        <li><button class="boton-filtro" data-filtro="psg">PSG</button></li>
+                        <li><button class="boton-filtro" data-filtro="manchesterunited">Manchester United</button></li>
+                        <li><button class="boton-filtro" data-filtro="manchestercity">Manchester City</button></li>
+                        <li><button class="boton-filtro" data-filtro="milan">AC Milan</button></li>
+                        <li><button class="boton-filtro" data-filtro="liverpool">Liverpool</button></li>
+                        <li><button class="boton-filtro" data-filtro="chelsea">Chelsea</button></li>
                     </ul>
 
                     <button class="boton-Paises" onclick="toggle('lista-paises')">Países Mundial 2026</button>
 
-                    <ul id="lista-paises" class="oculto">
-                        <li><button class="btn-filtro">Bolivia</button></li>
-                        <li><button class="btn-filtro">España</button></li>
-                        <li><button class="btn-filtro">Argentina</button></li>
-                        <li><button class="btn-filtro">Portugal</button></li>
-                        <li><button class="btn-filtro">Francia</button></li>
-                        <li><button class="btn-filtro">Inglaterra</button></li>
-                        <li><button class="btn-filtro">Brasil</button></li>
-                        <li><button class="btn-filtro">Holanda</button></li>
-                        <li><button class="btn-filtro">Colombia</button></li>
+                    <ul id="lista-paises">
+                        <li><button class="btn-filtro" data-filtro="bolivia">Bolivia</button></li>
+                        <li><button class="btn-filtro" data-filtro="espana">España</button></li>
+                        <li><button class="btn-filtro" data-filtro="argentina">Argentina</button></li>
+                        <li><button class="btn-filtro" data-filtro="portugal">Portugal</button></li>
+                        <li><button class="btn-filtro" data-filtro="francia">Francia</button></li>
+                        <li><button class="btn-filtro" data-filtro="inglaterra">Inglaterra</button></li>
+                        <li><button class="btn-filtro" data-filtro="brasil">Brasil</button></li>
+                        <li><button class="btn-filtro" data-filtro="holanda">Holanda</button></li>
+                        <li><button class="btn-filtro" data-filtro="colombia">Colombia</button></li>
                     </ul>
                 </aside>
 
-                <div class="grid-catalogo" id="camisetas-grid"></div>
+                <div class="grid-catalogo" id="camisetas-grid">
+                    
+                    <div class="tarjeta-producto" data-id="1" data-filtro="barcelona">
+                        <img src="barcaimagen.jpg" alt="Camiseta FC Barcelona">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">FC Barcelona Local</h3>
+                            <span class="tipo-producto">Popular del Barca</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="89.99">$89.99</span>
+                                <span class="precio-anterior">$110.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="1">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="2" data-filtro="madrid">
+                        <img src="madridimagen.jpg" alt="Camiseta Real Madrid">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Real Madrid Visitante</h3>
+                            <span class="tipo-producto">Popular del Madrid</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="94.99">$94.99</span>
+                                <span class="precio-anterior">$120.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="2">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="3" data-filtro="manchesterunited">
+                        <img src="manchesterunited.jpg" alt="Camiseta Manchester United">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Manchester United Home</h3>
+                            <span class="tipo-producto">Popular del Manchester</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                                <span class="precio-anterior">$130.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="3">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="4" data-filtro="bolivar">
+                        <img src="bolivar.webp" alt="Camiseta Club Bolívar">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Club Bolívar Local</h3>
+                            <span class="tipo-producto">Camiseta Actual de la AKD</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                                <span class="precio-anterior">$130.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="4">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="5" data-filtro="strongest">
+                        <img src="tigre.jpg" alt="Camiseta The Strongest">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">The Strongest Local</h3>
+                            <span class="tipo-producto">Camiseta Actual del Gualdinegro</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                                <span class="precio-anterior">$130.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="5">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="6" data-filtro="bolivia">
+                        <img src="bolivia.jpg" alt="Camiseta Selección de Bolivia">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Bolivia Home 25/26</h3>
+                            <span class="tipo-producto">Camiseta de la Verde</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                                <span class="precio-anterior">$130.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="6">Añadir al Carrito</button>
+                        </div>
+                    </div>
+
+                    <div class="tarjeta-producto" data-id="13" data-filtro="bolivar">
+                        <img src="bolivar-2.jpg" alt="Club Bolívar Visitante">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Club Bolívar Visitante</h3>
+                            <span class="tipo-producto">Edición Limitada</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="79.99">$79.99</span>
+                                <span class="precio-anterior">$130.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="13">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="14" data-filtro="bolivar">
+                        <img src="bolivar-3.jpg" alt="Club Bolívar Retro">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Club Bolívar Retro 90's</h3>
+                            <span class="tipo-producto">Colección Clásica</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="85.00">$85.00</span>
+                                <span class="precio-anterior">$95.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="14">Añadir al Carrito</button>
+                        </div>
+                    </div>
+
+                    <div class="tarjeta-producto" data-id="15" data-filtro="strongest">
+                        <img src="trigre-2.jpg" alt="The Strongest Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">The Strongest Tercera</h3>
+                            <span class="tipo-producto">Edición Especial 2025</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="79.99">$79.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="15">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="16" data-filtro="strongest">
+                        <img src="tigre-3.jpg" alt="The Strongest Retro">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">The Strongest Retro 90's</h3>
+                            <span class="tipo-producto">Colección Clásica</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="85.00">$85.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="16">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="17" data-filtro="barcelona">
+                        <img src="barca-2.jpg" alt="Barcelona Edición Especial">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Barcelona Edición Especial</h3>
+                            <span class="tipo-producto">Alternativa 25/26</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="69.99">$69.99</span>
+                                <span class="precio-anterior">$110.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="17">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="18" data-filtro="barcelona">
+                        <img src="barca-3.jpg" alt="Barcelona Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Barcelona Tercera</h3>
+                            <span class="tipo-producto">Temporada 25/26</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="94.99">$94.99</span>
+                                <span class="precio-anterior">$115.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="18">Añadir al Carrito</button>
+                        </div>
+                    </div>
+
+                    <div class="tarjeta-producto" data-id="19" data-filtro="madrid">
+                        <img src="madrid-tercera.jpg" alt="Real Madrid Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Real Madrid Tercera</h3>
+                            <span class="tipo-producto">Temporada 25/26</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="74.99">$74.99</span>
+                                <span class="precio-anterior">$125.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="19">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="20" data-filtro="madrid">
+                        <img src="madrid-3.jpg" alt="Real Madrid Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Real Madrid Home</h3>
+                            <span class="tipo-producto">Temporada 25/26</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                                <span class="precio-anterior">$130.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="20">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="21" data-filtro="psg">
+                        <img src="psg-1.jpg" alt="PSG Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">PSG Home</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.99">$95.99</span>
+                                <span class="precio-anterior">$125.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="21">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="22" data-filtro="psg">
+                        <img src="psg-2.jpg" alt="PSG Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">PSG Away</h3>
+                            <span class="tipo-producto">Edición Limitada</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="22">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="23" data-filtro="psg">
+                        <img src="psg-3.jpg" alt="PSG Retro">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">PSG Retro 2000</h3>
+                            <span class="tipo-producto">Colección Clásica</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="85.99">$85.99</span>
+                                <span class="precio-anterior">$105.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="23">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="24" data-filtro="manchesterunited">
+                        <img src="manu-2.jpg" alt="Manchester United Visitante">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Manchester United Visitante</h3>
+                            <span class="tipo-producto">Temporada 25/26</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="94.99">$94.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="24">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="25" data-filtro="manchesterunited">
+                        <img src="manu-3.jpg" alt="Manchester United Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Manchester United Tercera</h3>
+                            <span class="tipo-producto">Edición Especial</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                                <span class="precio-anterior">$130.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="25">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="26" data-filtro="manchestercity">
+                        <img src="mc-1.jpg" alt="Man City Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Man City Home</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.99">$95.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="26">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="27" data-filtro="manchestercity">
+                        <img src="mc-2.jpg" alt="Man City Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Man City Away</h3>
+                            <span class="tipo-producto">Temporada 25/26</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="90.00">$90.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="27">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="28" data-filtro="manchestercity">
+                        <img src="mc-3.jpg" alt="Man City Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Man City Tercera</h3>
+                            <span class="tipo-producto">Edición Limitada</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="28">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="29" data-filtro="milan">
+                        <img src="ac milan-2.webp" alt="AC Milan Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">AC Milan Home</h3>
+                            <span class="tipo-producto">Temporada 25/26</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.99">$95.99</span>
+                                <span class="precio-anterior">$125.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="29">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="30" data-filtro="milan">
+                        <img src="milan-2.jpg" alt="AC Milan Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">AC Milan Away</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="90.00">$90.00</span>
+                                <span class="precio-anterior">$115.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="30">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="31" data-filtro="milan">
+                        <img src="milan-3.jpg" alt="AC Milan Retro">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">AC Milan Retro</h3>
+                            <span class="tipo-producto">Clásica 99</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="85.99">$85.99</span>
+                                <span class="precio-anterior">$105.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="31">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="32" data-filtro="liverpool">
+                        <img src="liv-1.jpg" alt="Liverpool Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Liverpool Home</h3>
+                            <span class="tipo-producto">Temporada 25/26</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.99">$95.99</span>
+                                <span class="precio-anterior">$125.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="32">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="33" data-filtro="liverpool">
+                        <img src="liv-2.jpg" alt="Liverpool Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Liverpool Away</h3>
+                            <span class="tipo-producto">Edición Especial</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="90.00">$90.00</span>
+                                <span class="precio-anterior">$115.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="33">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="34" data-filtro="liverpool">
+                        <img src="liv-3.jpg" alt="Liverpool Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Liverpool Tercera</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                                <span class="precio-anterior">$130.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="34">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="35" data-filtro="chelsea">
+                        <img src="che-1.jpg" alt="Chelsea Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Chelsea Home</h3>
+                            <span class="tipo-producto">Temporada 25/26</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.99">$95.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="35">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="36" data-filtro="chelsea">
+                        <img src="che-2.jpg" alt="Chelsea Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Chelsea Away</h3>
+                            <span class="tipo-producto">Edición Especial</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="90.00">$90.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="36">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="37" data-filtro="chelsea">
+                        <img src="che-3.jpg" alt="Chelsea Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Chelsea Tercera</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="37">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="38" data-filtro="bolivia">
+                        <img src="bolivia-2.jpg" alt="Bolivia Visitante">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Bolivia Visitante</h3>
+                            <span class="tipo-producto">Selección Nacional 25/26</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="92.99">$92.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="38">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="39" data-filtro="bolivia">
+                        <img src="bolivia-3.jpg" alt="Bolivia Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Bolivia Tercera</h3>
+                            <span class="tipo-producto">Edición Copa América</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.00">$95.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="39">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="40" data-filtro="espana">
+                        <img src="espana-1.jpg" alt="España Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">España Home</h3>
+                            <span class="tipo-producto">Selección Nacional 2026</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="92.99">$92.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="40">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="41" data-filtro="espana">
+                        <img src="espana-2.jpg" alt="España Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">España Away</h3>
+                            <span class="tipo-producto">Selección Nacional</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.00">$95.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="41">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="42" data-filtro="espana">
+                        <img src="espana-3.jpg" alt="España Retro">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">España Retro 2010</h3>
+                            <span class="tipo-producto">Campeones del Mundo</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="89.99">$89.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="42">Añadir al Carrito</button>
+                        </div>
+                    </div>
+
+                    <div class="tarjeta-producto" data-id="43" data-filtro="argentina">
+                        <img src="arg-1.jpg" alt="Argentina Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Argentina Home</h3>
+                            <span class="tipo-producto">Selección Nacional 2026</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="92.99">$92.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="43">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="44" data-filtro="argentina">
+                        <img src="arg-2.jpg" alt="Argentina Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Argentina Away</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.00">$95.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="44">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="45" data-filtro="portugal">
+                        <img src="port-1.jpg" alt="Portugal Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Portugal Home</h3>
+                            <span class="tipo-producto">Selección Nacional 2026</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="92.99">$92.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="45">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="46" data-filtro="portugal">
+                        <img src="port-2.jpg" alt="Portugal Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Portugal Away</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.00">$95.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="46">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="47" data-filtro="portugal">
+                        <img src="port-3.jpg" alt="Portugal Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Portugal Tercera</h3>
+                            <span class="tipo-producto">Edición Ronaldo</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="47">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="48" data-filtro="francia">
+                        <img src="fra-1.jpg" alt="Francia Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Francia Home</h3>
+                            <span class="tipo-producto">Selección Nacional 2026</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="92.99">$92.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="48">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="49" data-filtro="francia">
+                        <img src="fra-2.jpg" alt="Francia Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Francia Away</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.00">$95.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="49">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="50" data-filtro="francia">
+                        <img src="fra-3.jpg" alt="Francia Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Francia Tercera</h3>
+                            <span class="tipo-producto">Edición Mbappe</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="50">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="51" data-filtro="inglaterra">
+                        <img src="ing-1.jpg" alt="Inglaterra Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Inglaterra Home</h3>
+                            <span class="tipo-producto">Selección Nacional 2026</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="92.99">$92.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="51">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="52" data-filtro="inglaterra">
+                        <img src="ing-2.jpg" alt="Inglaterra Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Inglaterra Away</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.00">$95.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="52">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="53" data-filtro="inglaterra">
+                        <img src="ing-3.jpg" alt="Inglaterra Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Inglaterra Tercera</h3>
+                            <span class="tipo-producto">Edición Kane</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="53">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="54" data-filtro="brasil">
+                        <img src="bra-1.jpg" alt="Brasil Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Brasil Home</h3>
+                            <span class="tipo-producto">Selección Nacional 2026</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="92.99">$92.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="54">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="55" data-filtro="brasil">
+                        <img src="bra-2.jpg" alt="Brasil Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Brasil Away</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.00">$95.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="55">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="56" data-filtro="brasil">
+                        <img src="bra-3.jpg" alt="Brasil Retro">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Brasil Retro 2002</h3>
+                            <span class="tipo-producto">Pentacampeones</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="89.99">$89.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="56">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="57" data-filtro="holanda">
+                        <img src="hol-1.jpg" alt="Holanda Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Holanda Home</h3>
+                            <span class="tipo-producto">Selección Nacional 2026</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="92.99">$92.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="57">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="58" data-filtro="holanda">
+                        <img src="hol-2.jpg" alt="Holanda Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Holanda Away</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.00">$95.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="58">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="59" data-filtro="holanda">
+                        <img src="hol-3.jpg" alt="Holanda Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Holanda Tercera</h3>
+                            <span class="tipo-producto">Edición Van Dijk</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="59">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    
+                    <div class="tarjeta-producto" data-id="60" data-filtro="colombia">
+                        <img src="col-1.jpg" alt="Colombia Home">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Colombia Home</h3>
+                            <span class="tipo-producto">Selección Nacional 2026</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="92.99">$92.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="60">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="61" data-filtro="colombia">
+                        <img src="col-2.jpg" alt="Colombia Away">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Colombia Away</h3>
+                            <span class="tipo-producto">Última Colección</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="95.00">$95.00</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="61">Añadir al Carrito</button>
+                        </div>
+                    </div>
+                    <div class="tarjeta-producto" data-id="62" data-filtro="colombia">
+                        <img src="col-3.jpg" alt="Colombia Tercera">
+                        <div class="info-producto">
+                            <h3 class="nombre-producto">Colombia Tercera</h3>
+                            <span class="tipo-producto">Edición James</span>
+                            <div class="contenedor-precio">
+                                <span class="precio-actual" data-precio="99.99">$99.99</span>
+                            </div>
+                            <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                            <button class="boton-agregar-carrito" data-id="62">Añadir al Carrito</button>
+                        </div>
+                    </div>
+
+                </div>
 
             </div>
         </section>
 
-        <!-- OFERTAS -->
         <section class="pagina" id="ofertas">
             <h1>Ofertas Especiales</h1>
-            <p>Aprovecha descuentos limitados antes de que se agoten</p>
+            <p class="subtitulo">Aprovecha descuentos limitados antes de que se agoten</p>
 
             <div class="grid-productos">
-
-                <!-- TODAS TUS OFERTAS COMPLETAS -->
-
-                <div class="tarjeta-producto oferta">
-                    <img src="barca-2.jpg">
+                <div class="tarjeta-producto oferta" data-id="7" data-filtro="barcelona">
+                    <img src="barca-2.jpg" alt="Barcelona Edición Especial">
                     <div class="info-producto">
-                        <h3>Barcelona Edición Especial</h3>
-                        <span class="tipo-producto">Temporada 25/26</span>
+                        <h3 class="nombre-producto">Barcelona Edición Especial</h3>
+                        <span class="tipo-producto">OFERTA! Stock Limitado</span>
                         <div class="contenedor-precio">
-                            <span class="precio-actual">$69.99</span>
+                            <span class="precio-actual" data-precio="69.99">$69.99</span>
                             <span class="precio-anterior">$110.00</span>
                         </div>
-                        <select class="selector-talla">
-                            <option>Seleccionar Talla</option>
-                            <option>S</option><option>M</option><option>L</option><option>XL</option>
-                        </select>
-                        <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                        <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                        <button class="boton-agregar-carrito" data-id="7">Añadir al Carrito</button>
                     </div>
                 </div>
 
-                <div class="tarjeta-producto oferta">
-                    <img src="madrid-tercera.jpg">
+                <div class="tarjeta-producto oferta" data-id="8" data-filtro="madrid">
+                    <img src="madrid-tercera.jpg" alt="Real Madrid Tercera">
                     <div class="info-producto">
-                        <h3>Real Madrid Tercera</h3>
-                        <span class="tipo-producto">Temporada 25/26</span>
+                        <h3 class="nombre-producto">Real Madrid Tercera</h3>
+                        <span class="tipo-producto">OFERTA! Temporada 25/26</span>
                         <div class="contenedor-precio">
-                            <span class="precio-actual">$74.99</span>
+                            <span class="precio-actual" data-precio="74.99">$74.99</span>
                             <span class="precio-anterior">$125.00</span>
                         </div>
-                        <select class="selector-talla">
-                            <option>Seleccionar Talla</option>
-                            <option>S</option><option>M</option><option>L</option><option>XL</option>
-                        </select>
-                        <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                        <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                        <button class="boton-agregar-carrito" data-id="8">Añadir al Carrito</button>
                     </div>
                 </div>
 
-                <div class="tarjeta-producto oferta">
-                    <img src="bolivar-2.jpg">
+                <div class="tarjeta-producto oferta" data-id="9" data-filtro="bolivar">
+                    <img src="bolivar-2.jpg" alt="Club Bolívar Edición Limitada">
                     <div class="info-producto">
-                        <h3>Club Bolívar Edición Limitada</h3>
-                        <span class="tipo-producto">Bolivia</span>
+                        <h3 class="nombre-producto">Club Bolívar Edición Limitada</h3>
+                        <span class="tipo-producto">OFERTA! Bolivia</span>
                         <div class="contenedor-precio">
-                            <span class="precio-actual">$79.99</span>
+                            <span class="precio-actual" data-precio="79.99">$79.99</span>
                             <span class="precio-anterior">$130.00</span>
                         </div>
-                        <select class="selector-talla">
-                            <option>Seleccionar Talla</option>
-                            <option>S</option><option>M</option><option>L</option><option>XL</option>
-                        </select>
-                        <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                        <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                        <button class="boton-agregar-carrito" data-id="9">Añadir al Carrito</button>
                     </div>
                 </div>
 
-                <div class="tarjeta-producto oferta">
-                    <img src="trigre-2.jpg">
+                <div class="tarjeta-producto oferta" data-id="10" data-filtro="strongest">
+                    <img src="trigre-2.jpg" alt="The Strongest 2025">
                     <div class="info-producto">
-                        <h3>The Strongest 2025</h3>
-                        <span class="tipo-producto">Bolivia</span>
+                        <h3 class="nombre-producto">The Strongest 2025</h3>
+                        <span class="tipo-producto">OFERTA! Bolivia</span>
                         <div class="contenedor-precio">
-                            <span class="precio-actual">$79.99</span>
+                            <span class="precio-actual" data-precio="79.99">$79.99</span>
                             <span class="precio-anterior">$130.00</span>
                         </div>
-                        <select class="selector-talla">
-                            <option>Seleccionar Talla</option>
-                            <option>S</option><option>M</option><option>L</option><option>XL</option>
-                        </select>
-                        <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                        <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                        <button class="boton-agregar-carrito" data-id="10">Añadir al Carrito</button>
                     </div>
                 </div>
 
-                <div class="tarjeta-producto oferta">
-                    <img src="ac milan-2.webp">
+                <div class="tarjeta-producto oferta" data-id="11" data-filtro="milan">
+                    <img src="ac milan-2.webp" alt="AC Milan Edición Especial">
                     <div class="info-producto">
-                        <h3>AC Milan Edición Especial</h3>
-                        <span class="tipo-producto">Temporada 25/26</span>
+                        <h3 class="nombre-producto">AC Milan Edición Especial</h3>
+                        <span class="tipo-producto">OFERTA! Temporada 25/26</span>
                         <div class="contenedor-precio">
-                            <span class="precio-actual">$69.99</span>
+                            <span class="precio-actual" data-precio="69.99">$69.99</span>
                             <span class="precio-anterior">$110.00</span>
                         </div>
-                        <select class="selector-talla">
-                            <option>Seleccionar Talla</option>
-                            <option>S</option><option>M</option><option>L</option><option>XL</option>
-                        </select>
-                        <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                        <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                        <button class="boton-agregar-carrito" data-id="11">Añadir al Carrito</button>
                     </div>
                 </div>
 
-                <div class="tarjeta-producto oferta">
-                    <img src="argentina-edicionespecial.jpg">
+                <div class="tarjeta-producto oferta" data-id="12" data-filtro="argentina">
+                    <img src="argentina-edicionespecial.jpg" alt="Argentina Edición Especial">
                     <div class="info-producto">
-                        <h3>Argentina Edición Especial</h3>
-                        <span class="tipo-producto">Temporada 25/26</span>
+                        <h3 class="nombre-producto">Argentina Edición Especial</h3>
+                        <span class="tipo-producto">OFERTA! Stock Limitado</span>
                         <div class="contenedor-precio">
-                            <span class="precio-actual">$69.99</span>
+                            <span class="precio-actual" data-precio="69.99">$69.99</span>
                             <span class="precio-anterior">$110.00</span>
                         </div>
-                        <select class="selector-talla">
-                            <option>Seleccionar Talla</option>
-                            <option>S</option><option>M</option><option>L</option><option>XL</option>
-                        </select>
-                        <button class="boton-agregar-carrito">Añadir al Carrito</button>
+                        <select class="selector-talla"><option value="">Seleccionar Talla</option><option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option></select>
+                        <button class="boton-agregar-carrito" data-id="12">Añadir al Carrito</button>
                     </div>
                 </div>
 
             </div>
         </section>
 
-        <!-- CONTACTOS -->
         <section class="pagina" id="contactos">
             <h1>Contáctanos</h1>
-            <p>Estamos aquí para ayudarte. Envíanos un mensaje o usa nuestras redes</p>
+            <p class="subtitulo">Estamos aquí para ayudarte. Envíanos un mensaje o usa nuestras redes</p>
 
             <div class="contenedor-contacto">
                 <form class="formulario-contacto">
-                    <label>Nombre Completo</label>
-                    <input type="text" placeholder="Escribe tu nombre">
-
-                    <label>Correo Electrónico</label>
-                    <input type="email" placeholder="tucorreo@gmail.com">
-
-                    <label>Mensaje</label>
-                    <textarea placeholder="Escribe tu mensaje aquí..."></textarea>
-
+                    <div class="campo-formulario">
+                        <label>Nombre Completo</label>
+                        <input type="text" placeholder="Escribe tu nombre">
+                    </div>
+                    <div class="campo-formulario">
+                        <label>Correo Electrónico</label>
+                        <input type="email" placeholder="tucorreo@gmail.com">
+                    </div>
+                    <div class="campo-formulario">
+                        <label>Mensaje</label>
+                        <textarea placeholder="Escribe tu mensaje aquí..."></textarea>
+                    </div>
                     <button class="boton-rojo" type="submit">Enviar Mensaje</button>
                 </form>
 
@@ -904,47 +1774,402 @@
             </div>
         </section>
 
-        <!-- BUSCAR -->
         <section class="pagina" id="buscar">
-            <h1>Buscar</h1>
-            <p>Pronto podrás buscar camisetas aquí</p>
+            <h1>Buscar Camisetas</h1>
+            <p class="subtitulo">Encuentra tu equipo favorito o selección nacional</p>
+            
+            <div class="contenedor-busqueda">
+                <input type="text" id="campo-busqueda" placeholder="Ej: Real Madrid, Bolivia, 2025...">
+                
+                <h2 style="margin-top: 0;">Resultados</h2>
+                <div id="resultados-busqueda">
+                    <p id="mensaje-busqueda" style="grid-column: 1 / -1; text-align: center; color: var(--color-texto-gris);">
+                        Introduce un término de búsqueda para comenzar.
+                    </p>
+                </div>
+            </div>
         </section>
 
-        <!-- CARRITO -->
         <section class="pagina" id="carrito">
-            <h1>Carrito</h1>
-            <p>Aquí verás tus productos próximamente</p>
+            <h1>Tu Carrito de Compras</h1>
+            <p class="subtitulo">Revisa los productos que deseas comprar.</p>
+
+            <ul id="lista-carrito">
+                </ul>
+            
+            <p style="text-align: right; font-size: 1.5rem; margin-top: 20px;">
+                Total: <strong id="total-carrito">$0.00</strong>
+            </p>
+
+            <div class="acciones-carrito">
+                <button id="vaciar-carrito">Vaciar Carrito</button>
+                <a class="boton-rojo" style="max-width: 250px;">Proceder al Pago</a>
+            </div>
         </section>
 
     </main>
 
-    <!-- FOOTER -->
     <footer class="pie-pagina">
         <p>&copy; 2025 CAMSI — Todos los derechos reservados.</p>
         <p>Diseñado con Inspiracion CAM-AL</p>
     </footer>
 
     <script>
-      // Obtiene las referencias al botón de la hamburguesa y al menú móvil
+        // Referencias de Elementos Globales
         const botonToggle = document.getElementById('menu-toggle');
         const menuMovil = document.getElementById('menu-movil');
+        const contadorCarrito = document.getElementById('contador-carrito');
+        const listaCarrito = document.getElementById('lista-carrito');
+        const totalCarritoElemento = document.getElementById('total-carrito');
+        const botonVaciarCarrito = document.getElementById('vaciar-carrito');
+        const campoBusqueda = document.getElementById('campo-busqueda');
+        const resultadosBusqueda = document.getElementById('resultados-busqueda');
 
-        // Función para alternar la visibilidad del menú
-        botonToggle.addEventListener('click', () => {
-            // Alterna la clase 'mostrar' en el menú móvil para deslizarlo
-            menuMovil.classList.toggle('mostrar');
-            
-            // Opcional: Actualiza el estado aria-expanded para accesibilidad
-            const isExpanded = botonToggle.getAttribute('aria-expanded') === 'true';
-            botonToggle.setAttribute('aria-expanded', !isExpanded);
-        });
+        // IDs de los 6 productos principales para mostrar al inicio en Catálogo e Inicio
+        const IDS_INICIALES = ["1", "2", "3", "4", "5", "6"];
 
-        // Opcional: Cerrar el menú si se hace clic en un enlace
-        menuMovil.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', () => {
-                menuMovil.classList.remove('mostrar');
-                botonToggle.setAttribute('aria-expanded', 'false');
+        // Almacenamiento local para el carrito
+        let carrito = JSON.parse(localStorage.getItem('carritoCamsi')) || [];
+        
+        // Almacenamiento de todos los productos disponibles
+        let todosLosProductos = [];
+        
+
+        // --- FUNCIONES CENTRALES DE LA APP ---
+
+        function cambiarPagina(paginaId) {
+            // 1. Ocultar todas las secciones
+            document.querySelectorAll('.pagina').forEach(section => {
+                section.classList.remove('visible');
             });
+
+            // 2. Mostrar la sección deseada
+            const pagina = document.getElementById(paginaId);
+            if (pagina) {
+                pagina.classList.add('visible');
+            }
+
+            // 3. Actualizar el estado 'activo' en los enlaces del menú
+            document.querySelectorAll('.menu-navegacion a, .menu-movil a').forEach(link => {
+                link.classList.remove('enlace-activo');
+            });
+            document.querySelectorAll(`a[data-page="${paginaId}"]`).forEach(link => {
+                link.classList.add('enlace-activo');
+            });
+
+            // 4. Lógica específica por página
+            if (paginaId === 'carrito') {
+                renderizarCarrito();
+            } else if (paginaId === 'buscar') {
+                buscarProductos(); // Ejecuta búsqueda inicial
+            } else if (paginaId === 'camisetas') {
+                mostrarProductosInicialesDelCatalogo(); // Muestra los 6 principales al entrar
+            }
+
+            // Desplazamiento suave al inicio de la página principal
+            const mainContent = document.querySelector('main');
+            if (mainContent) {
+                mainContent.scrollIntoView({ behavior: 'smooth' }); 
+            }
+        }
+        
+        // Función para los filtros del catálogo (toggle de listas UL)
+        window.toggle = function(id) {
+            const elemento = document.getElementById(id);
+            if (elemento) {
+                const estaOculto = elemento.style.display === 'none' || elemento.style.display === '';
+                elemento.style.display = estaOculto ? 'block' : 'none';
+            }
+        }
+        
+        // --- FUNCIONES DEL CARRITO ---
+        
+        function actualizarContador() {
+            const totalItems = carrito.length;
+            contadorCarrito.textContent = totalItems;
+        }
+
+        function calcularTotal() {
+            const total = carrito.reduce((sum, item) => sum + (parseFloat(item.precio) * 1), 0);
+            totalCarritoElemento.textContent = `$${total.toFixed(2)}`;
+        }
+        
+        function guardarCarrito() {
+            localStorage.setItem('carritoCamsi', JSON.stringify(carrito));
+            actualizarContador();
+            calcularTotal();
+        }
+
+        function agregarAlCarrito(producto) {
+            carrito.push(producto);
+            guardarCarrito();
+            alert(`"${producto.nombre} - Talla ${producto.talla}" añadido al carrito!`);
+        }
+
+        function eliminarItem(index) {
+            carrito.splice(index, 1); 
+            guardarCarrito();
+            renderizarCarrito();
+        }
+
+        function vaciarCarrito() {
+            if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
+                carrito = [];
+                guardarCarrito();
+                renderizarCarrito();
+            }
+        }
+
+        function renderizarCarrito() {
+            listaCarrito.innerHTML = ''; 
+
+            if (carrito.length === 0) {
+                listaCarrito.innerHTML = `<p style="text-align: center; padding: 30px; color: var(--color-texto-gris);">El carrito está vacío. ¡Añade algunas camisetas!</p>`;
+                botonVaciarCarrito.style.display = 'none';
+                document.querySelector('.acciones-carrito a').style.display = 'none';
+                calcularTotal();
+                return;
+            }
+            
+            botonVaciarCarrito.style.display = 'block';
+            document.querySelector('.acciones-carrito a').style.display = 'inline-block';
+
+            carrito.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.classList.add('item-carrito');
+                li.innerHTML = `
+                    <div class="info-item">
+                        <strong>${item.nombre}</strong>
+                        <span>Talla: ${item.talla} | Precio: $${parseFloat(item.precio).toFixed(2)}</span>
+                    </div>
+                    <button class="boton-eliminar-uno" data-index="${index}">Eliminar</button>
+                `;
+                listaCarrito.appendChild(li);
+            });
+            
+            // Asigna el evento de eliminación
+            document.querySelectorAll('.boton-eliminar-uno').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.getAttribute('data-index'));
+                    eliminarItem(index);
+                });
+            });
+
+            calcularTotal();
+        }
+
+        // --- FUNCIONES DE BÚSQUEDA Y FILTRO ---
+        
+        function obtenerTodosLosProductos() {
+            const productos = [];
+            // Recorre todas las tarjetas de producto en todas las secciones para capturar el inventario completo
+            document.querySelectorAll('.tarjeta-producto').forEach(tarjeta => {
+                const id = tarjeta.getAttribute('data-id');
+                
+                if (!productos.some(p => p.id === id)) {
+                     // Obtener el precio anterior de forma segura
+                    let precioAnterior = '';
+                    const precioAnteriorElement = tarjeta.querySelector('.precio-anterior');
+                    if (precioAnteriorElement) {
+                        precioAnterior = precioAnteriorElement.textContent;
+                    }
+                    
+                     productos.push({
+                        id: id,
+                        nombre: tarjeta.querySelector('.nombre-producto').textContent,
+                        tipo: tarjeta.querySelector('.tipo-producto').textContent,
+                        precio: tarjeta.querySelector('.precio-actual').getAttribute('data-precio'),
+                        precioFormato: tarjeta.querySelector('.precio-actual').textContent,
+                        precioAnterior: precioAnterior,
+                        imagen: tarjeta.querySelector('img').getAttribute('src'),
+                        filtro: tarjeta.getAttribute('data-filtro')
+                    });
+                }
+            });
+            return productos;
+        }
+
+        function buscarProductos() {
+            const termino = campoBusqueda.value.toLowerCase().trim();
+            resultadosBusqueda.innerHTML = '';
+            
+            const productosAMostrar = todosLosProductos.filter(producto => {
+                return producto.nombre.toLowerCase().includes(termino) ||
+                       producto.tipo.toLowerCase().includes(termino) ||
+                       (producto.filtro && producto.filtro.toLowerCase().includes(termino));
+            });
+
+            if (termino.length < 2 || productosAMostrar.length === 0) {
+                resultadosBusqueda.innerHTML = `<p id="mensaje-busqueda" style="grid-column: 1 / -1; text-align: center; color: var(--color-texto-gris);">${termino.length < 2 ? 'Introduce un término de búsqueda para comenzar.' : 'No se encontraron resultados para "' + termino + '".'}</p>`;
+                return;
+            }
+
+            productosAMostrar.forEach(producto => {
+                resultadosBusqueda.appendChild(crearTarjetaProducto(producto));
+            });
+            
+            // Re-asigna listeners a los nuevos botones de carrito
+            asignarListenersCarrito();
+        }
+        
+        // Helper: Crea una tarjeta de producto a partir de un objeto JS (usada en la función de búsqueda)
+        function crearTarjetaProducto(producto) {
+            const tarjeta = document.createElement('div');
+            tarjeta.classList.add('tarjeta-producto');
+            tarjeta.setAttribute('data-id', producto.id);
+            tarjeta.setAttribute('data-filtro', producto.filtro || '');
+            
+            if (producto.tipo.toLowerCase().includes('oferta')) {
+                tarjeta.classList.add('oferta');
+            }
+            
+            tarjeta.innerHTML = `
+                <img src="${producto.imagen}" alt="Camiseta ${producto.nombre}">
+                <div class="info-producto">
+                    <h3 class="nombre-producto">${producto.nombre}</h3>
+                    <span class="tipo-producto">${producto.tipo}</span>
+                    <div class="contenedor-precio">
+                        <span class="precio-actual" data-precio="${producto.precio}">$${parseFloat(producto.precio).toFixed(2)}</span>
+                        ${producto.precioAnterior ? `<span class="precio-anterior">${producto.precioAnterior}</span>` : ''}
+                    </div>
+                    <select class="selector-talla">
+                        <option value="">Seleccionar Talla</option>
+                        <option value="S">S</option><option value="M">M</option><option value="L">L</option><option value="XL">XL</option>
+                    </select>
+                    <button class="boton-agregar-carrito" data-id="${producto.id}">Añadir al Carrito</button>
+                </div>
+            `;
+            return tarjeta;
+        }
+
+        // Muestra solo los 6 productos iniciales del Catálogo
+        function mostrarProductosInicialesDelCatalogo() {
+            const grid = document.getElementById('camisetas-grid');
+            if (!grid) return;
+            
+            const productos = grid.querySelectorAll('.tarjeta-producto');
+            productos.forEach(producto => {
+                const id = producto.getAttribute('data-id');
+                
+                if (IDS_INICIALES.includes(id)) {
+                    producto.style.display = 'block';
+                } else {
+                    producto.style.display = 'none';
+                }
+            });
+        }
+
+
+        function filtrarProductos(filtro) {
+            const grid = document.getElementById('camisetas-grid');
+            const productos = grid.querySelectorAll('.tarjeta-producto');
+            
+            productos.forEach(producto => {
+                const productoFiltro = producto.getAttribute('data-filtro');
+                
+                // Muestra solo si coincide con el filtro, oculta el resto.
+                if (productoFiltro === filtro) {
+                    producto.style.display = 'block';
+                } else {
+                    producto.style.display = 'none';
+                }
+            });
+            
+            // Si el filtro no tiene resultados (por si se intenta filtrar un ID inicial), 
+            // no hace falta un manejo especial ya que el usuario querría ver los resultados del filtro.
+        }
+        
+        // --- INICIALIZACIÓN Y EVENT LISTENERS ---
+
+        function asignarListenersCarrito() {
+            // Elimina listeners anteriores para evitar duplicados (importante para la función de búsqueda)
+            document.querySelectorAll('.boton-agregar-carrito').forEach(button => {
+                button.removeEventListener('click', handleAgregarCarrito);
+                button.addEventListener('click', handleAgregarCarrito);
+            });
+        }
+        
+        function handleAgregarCarrito(e) {
+            const id = e.target.getAttribute('data-id');
+            const tarjeta = e.target.closest('.tarjeta-producto'); 
+            if (!tarjeta) return;
+            
+            const tallaSelect = tarjeta.querySelector('.selector-talla');
+            const talla = tallaSelect.value;
+            const nombre = tarjeta.querySelector('.nombre-producto').textContent;
+            const precio = tarjeta.querySelector('.precio-actual').getAttribute('data-precio');
+            
+            if (!talla || talla === "") {
+                alert(`Por favor, selecciona una talla para la camiseta de ${nombre}.`);
+                return;
+            }
+
+            agregarAlCarrito({
+                id: id,
+                nombre: nombre,
+                talla: talla,
+                precio: precio
+            });
+        }
+        
+        // Función de inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Inicializa variables de producto y carrito
+            todosLosProductos = obtenerTodosLosProductos();
+            actualizarContador();
+            calcularTotal();
+            
+            // 2. Asignar evento al botón de vaciar carrito
+            botonVaciarCarrito.addEventListener('click', vaciarCarrito);
+            
+            // 3. Asignar evento de búsqueda
+            campoBusqueda.addEventListener('input', buscarProductos);
+
+            // 4. Asigna listeners a los botones "Añadir al Carrito"
+            asignarListenersCarrito();
+            
+            // 5. Asignar listeners de navegación
+            document.querySelectorAll('[data-page]').forEach(linkOrButton => {
+                linkOrButton.addEventListener('click', (e) => {
+                    if (linkOrButton.tagName === 'A') {
+                        e.preventDefault(); 
+                    }
+                    
+                    const paginaDestino = linkOrButton.getAttribute('data-page');
+                    
+                    if (paginaDestino) {
+                        cambiarPagina(paginaDestino);
+                    }
+
+                    // CIERRA EL MENÚ MÓVIL
+                    if (menuMovil.classList.contains('mostrar')) {
+                        menuMovil.classList.remove('mostrar');
+                        botonToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+            
+            // 6. Asignar listeners a los botones de filtro del catálogo
+            document.querySelectorAll('.boton-filtro, .btn-filtro').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const filtro = e.target.getAttribute('data-filtro');
+                    filtrarProductos(filtro);
+                });
+            });
+
+
+            // 7. Configuración del menú hamburguesa (toggle)
+            botonToggle.addEventListener('click', () => {
+                menuMovil.classList.toggle('mostrar');
+                const isExpanded = botonToggle.getAttribute('aria-expanded') === 'true';
+                botonToggle.setAttribute('aria-expanded', !isExpanded);
+            });
+            
+            // 8. Mostrar la página de inicio al cargar
+            if (!document.querySelector('.pagina.visible')) {
+                cambiarPagina('inicio'); 
+            }
         });
     </script>
 
