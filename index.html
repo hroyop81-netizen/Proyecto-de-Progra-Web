@@ -2079,6 +2079,97 @@
         }
         
         
+
+        function asignarListenersCarrito() {
+            // Elimina listeners anteriores para evitar duplicados (importante para la función de búsqueda)
+            document.querySelectorAll('.boton-agregar-carrito').forEach(button => {
+                button.removeEventListener('click', handleAgregarCarrito);
+                button.addEventListener('click', handleAgregarCarrito);
+            });
+        }
+        
+        function handleAgregarCarrito(e) {
+            const id = e.target.getAttribute('data-id');
+            const tarjeta = e.target.closest('.tarjeta-producto'); 
+            if (!tarjeta) return;
+            
+            const tallaSelect = tarjeta.querySelector('.selector-talla');
+            const talla = tallaSelect.value;
+            const nombre = tarjeta.querySelector('.nombre-producto').textContent;
+            const precio = tarjeta.querySelector('.precio-actual').getAttribute('data-precio');
+            
+            if (!talla || talla === "") {
+                alert(`Por favor, selecciona una talla para la camiseta de ${nombre}.`);
+                return;
+            }
+
+            agregarAlCarrito({
+                id: id,
+                nombre: nombre,
+                talla: talla,
+                precio: precio
+            });
+        }
+        
+        // Función de inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Inicializa variables de producto y carrito
+            todosLosProductos = obtenerTodosLosProductos();
+            actualizarContador();
+            calcularTotal();
+            
+            // 2. Asignar evento al botón de vaciar carrito
+            botonVaciarCarrito.addEventListener('click', vaciarCarrito);
+            
+            // 3. Asignar evento de búsqueda
+            campoBusqueda.addEventListener('input', buscarProductos);
+
+            // 4. Asigna listeners a los botones "Añadir al Carrito"
+            asignarListenersCarrito();
+            
+            // 5. Asignar listeners de navegación
+            document.querySelectorAll('[data-page]').forEach(linkOrButton => {
+                linkOrButton.addEventListener('click', (e) => {
+                    if (linkOrButton.tagName === 'A') {
+                        e.preventDefault(); 
+                    }
+                    
+                    const paginaDestino = linkOrButton.getAttribute('data-page');
+                    
+                    if (paginaDestino) {
+                        cambiarPagina(paginaDestino);
+                    }
+
+                    // CIERRA EL MENÚ MÓVIL
+                    if (menuMovil.classList.contains('mostrar')) {
+                        menuMovil.classList.remove('mostrar');
+                        botonToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            });
+            
+            // 6. Asignar listeners a los botones de filtro del catálogo
+            document.querySelectorAll('.boton-filtro, .btn-filtro').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const filtro = e.target.getAttribute('data-filtro');
+                    filtrarProductos(filtro);
+                });
+            });
+
+
+            // 7. Configuración del menú hamburguesa (toggle)
+            botonToggle.addEventListener('click', () => {
+                menuMovil.classList.toggle('mostrar');
+                const isExpanded = botonToggle.getAttribute('aria-expanded') === 'true';
+                botonToggle.setAttribute('aria-expanded', !isExpanded);
+            });
+            
+            // 8. Mostrar la página de inicio al cargar
+            if (!document.querySelector('.pagina.visible')) {
+                cambiarPagina('inicio'); 
+            }
+        });
         
     </script>
 
