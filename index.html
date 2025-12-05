@@ -1881,7 +1881,82 @@
                 elemento.style.display = estaOculto ? 'block' : 'none';
             }
         }
+        // --- FUNCIONES DEL CARRITO ---
         
+        function actualizarContador() {
+            const totalItems = carrito.length;
+            contadorCarrito.textContent = totalItems;
+        }
+
+        function calcularTotal() {
+            const total = carrito.reduce((sum, item) => sum + (parseFloat(item.precio) * 1), 0);
+            totalCarritoElemento.textContent = `$${total.toFixed(2)}`;
+        }
+        
+        function guardarCarrito() {
+            localStorage.setItem('carritoCamsi', JSON.stringify(carrito));
+            actualizarContador();
+            calcularTotal();
+        }
+
+        function agregarAlCarrito(producto) {
+            carrito.push(producto);
+            guardarCarrito();
+            alert(`"${producto.nombre} - Talla ${producto.talla}" añadido al carrito!`);
+        }
+
+        function eliminarItem(index) {
+            carrito.splice(index, 1); 
+            guardarCarrito();
+            renderizarCarrito();
+        }
+
+        function vaciarCarrito() {
+            if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
+                carrito = [];
+                guardarCarrito();
+                renderizarCarrito();
+            }
+        }
+
+        function renderizarCarrito() {
+            listaCarrito.innerHTML = ''; 
+
+            if (carrito.length === 0) {
+                listaCarrito.innerHTML = `<p style="text-align: center; padding: 30px; color: var(--color-texto-gris);">El carrito está vacío. ¡Añade algunas camisetas!</p>`;
+                botonVaciarCarrito.style.display = 'none';
+                document.querySelector('.acciones-carrito a').style.display = 'none';
+                calcularTotal();
+                return;
+            }
+            
+            botonVaciarCarrito.style.display = 'block';
+            document.querySelector('.acciones-carrito a').style.display = 'inline-block';
+
+            carrito.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.classList.add('item-carrito');
+                li.innerHTML = `
+                    <div class="info-item">
+                        <strong>${item.nombre}</strong>
+                        <span>Talla: ${item.talla} | Precio: $${parseFloat(item.precio).toFixed(2)}</span>
+                    </div>
+                    <button class="boton-eliminar-uno" data-index="${index}">Eliminar</button>
+                `;
+                listaCarrito.appendChild(li);
+            });
+            
+            // Asigna el evento de eliminación
+            document.querySelectorAll('.boton-eliminar-uno').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.getAttribute('data-index'));
+                    eliminarItem(index);
+                });
+            });
+
+            calcularTotal();
+        }
+
         
     </script>
 
