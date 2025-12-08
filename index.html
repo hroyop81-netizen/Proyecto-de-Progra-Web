@@ -57,10 +57,19 @@
         }
 
         /* --- CENTRADO GENERAL DE TEXTOS Y ACCIONES PRINCIPALES --- */
-        h1, h2, .subtitulo, .texto-principales, .etiqueta-principales, 
+        h1, h2, .subtitulo, .texto-principales,
         .acciones-carrito p, .acciones-carrito a, .contenedor-busqueda h2 {
             text-align: center !important; 
+            align-items: center;
+            align-content: center;
         }
+
+        .etiqueta-principales {
+            display: block;      /* Hace que el span se comporte como bloque */
+            width: 100%;         /* Ocupa todo el ancho disponible */
+            text-align: center;  /* Centra el texto */
+        }
+
         /* --- FIN CENTRADO --- */
 
         .barra-navegacion {
@@ -727,6 +736,86 @@
                 justify-content: space-between;
             }
         }
+        
+        /* ==== FORMULARIO DE PAGO ==== */
+        #formulario-pago {
+            max-width: 500px;
+            margin: 30px auto 0 auto;
+            padding: 25px;
+            background: #f9f9f9;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            animation: aparecer 0.4s ease-in-out;
+        }
+
+        #formulario-pago h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #222;
+        }
+
+        #pago-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Inputs */
+        #pago-form input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            outline: none;
+            transition: 0.2s ease;
+        }
+
+        #pago-form input:focus {
+            border-color: #e63946;
+            box-shadow: 0 0 0 2px rgba(230,57,70,0.1);
+        }
+
+        /* Total a pagar */
+        #total-pagar {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
+        }
+
+        /* Botón confirmar */
+        #pago-form button {
+            background: #e63946;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s ease-in-out;
+        }
+
+        #pago-form button:hover {
+            background: #d62839;
+            transform: scale(1.02);
+        }
+
+        /* Animación */
+        @keyframes aparecer {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -777,6 +866,8 @@
                     <p class="texto-principales">
                         Descubre nuestra colección exclusiva de camisetas premium de los mejores equipos.
                     </p>
+                    <br>
+                    <br>
                     <div class="botones-principales">
                         <a class="boton-rojo" data-page="camisetas">Ver Catálogo</a>
                         <a class="boton-blanco" data-page="ofertas">Ofertas Especiales</a>
@@ -1802,9 +1893,20 @@
             </p>
 
             <div class="acciones-carrito">
-                <button id="vaciar-carrito">Vaciar Carrito</button>
-                <a class="boton-rojo" style="max-width: 250px;">Proceder al Pago</a>
+                <a id="btn-pagar" class="boton-rojo" style="max-width: 250px; cursor:pointer;">Proceder al Pago</a>
             </div>
+            <div id="formulario-pago" style="display: none; margin-top: 20px;">
+                <h2>Datos para el pago</h2>
+                <form id="pago-form">
+                    <input type="text" id="nombre" placeholder="Nombre completo" required><br><br>
+                    <input type="email" id="email" placeholder="Correo electrónico" required><br><br>
+                    <input type="text" id="direccion" placeholder="Dirección de envío" required><br><br>
+                    <input type="tel" id="telefono" placeholder="Teléfono" required><br><br>
+                    <h3 id="total-pagar"></h3>
+                    <button type="submit" class="boton-rojo">Confirmar Pedido</button>
+                </form>
+            </div>
+
         </section>
 
     </main>
@@ -1815,41 +1917,33 @@
     </footer>
 
     <script>
-        // Referencias de Elementos Globales
+        
         const botonToggle = document.getElementById('menu-toggle');
         const menuMovil = document.getElementById('menu-movil');
         const contadorCarrito = document.getElementById('contador-carrito');
         const listaCarrito = document.getElementById('lista-carrito');
         const totalCarritoElemento = document.getElementById('total-carrito');
-        const botonVaciarCarrito = document.getElementById('vaciar-carrito');
+        
         const campoBusqueda = document.getElementById('campo-busqueda');
         const resultadosBusqueda = document.getElementById('resultados-busqueda');
 
-        // IDs de los 6 productos principales para mostrar al inicio en Catálogo e Inicio
         const IDS_INICIALES = ["1", "2", "3", "4", "5", "6"];
 
-        // Almacenamiento local para el carrito
         let carrito = JSON.parse(localStorage.getItem('carritoCamsi')) || [];
         
-        // Almacenamiento de todos los productos disponibles
         let todosLosProductos = [];
         
 
-        // --- FUNCIONES CENTRALES DE LA APP ---
-
         function cambiarPagina(paginaId) {
-            // 1. Ocultar todas las secciones
             document.querySelectorAll('.pagina').forEach(section => {
                 section.classList.remove('visible');
             });
 
-            // 2. Mostrar la sección deseada
             const pagina = document.getElementById(paginaId);
             if (pagina) {
                 pagina.classList.add('visible');
             }
 
-            // 3. Actualizar el estado 'activo' en los enlaces del menú
             document.querySelectorAll('.menu-navegacion a, .menu-movil a').forEach(link => {
                 link.classList.remove('enlace-activo');
             });
@@ -1857,23 +1951,20 @@
                 link.classList.add('enlace-activo');
             });
 
-            // 4. Lógica específica por página
             if (paginaId === 'carrito') {
                 renderizarCarrito();
             } else if (paginaId === 'buscar') {
-                buscarProductos(); // Ejecuta búsqueda inicial
+                buscarProductos();
             } else if (paginaId === 'camisetas') {
-                mostrarProductosInicialesDelCatalogo(); // Muestra los 6 principales al entrar
+                mostrarProductosInicialesDelCatalogo();
             }
 
-            // Desplazamiento suave al inicio de la página principal
             const mainContent = document.querySelector('main');
             if (mainContent) {
                 mainContent.scrollIntoView({ behavior: 'smooth' }); 
             }
         }
         
-        // Función para los filtros del catálogo (toggle de listas UL)
         window.toggle = function(id) {
             const elemento = document.getElementById(id);
             if (elemento) {
@@ -1881,7 +1972,6 @@
                 elemento.style.display = estaOculto ? 'block' : 'none';
             }
         }
-        // --- FUNCIONES DEL CARRITO ---
         
         function actualizarContador() {
             const totalItems = carrito.length;
@@ -1911,26 +2001,20 @@
             renderizarCarrito();
         }
 
-        function vaciarCarrito() {
-            if (confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
-                carrito = [];
-                guardarCarrito();
-                renderizarCarrito();
-            }
-        }
+        
 
         function renderizarCarrito() {
             listaCarrito.innerHTML = ''; 
 
             if (carrito.length === 0) {
                 listaCarrito.innerHTML = `<p style="text-align: center; padding: 30px; color: var(--color-texto-gris);">El carrito está vacío. ¡Añade algunas camisetas!</p>`;
-                botonVaciarCarrito.style.display = 'none';
+                
                 document.querySelector('.acciones-carrito a').style.display = 'none';
                 calcularTotal();
                 return;
             }
             
-            botonVaciarCarrito.style.display = 'block';
+            
             document.querySelector('.acciones-carrito a').style.display = 'inline-block';
 
             carrito.forEach((item, index) => {
@@ -1946,7 +2030,6 @@
                 listaCarrito.appendChild(li);
             });
             
-            // Asigna el evento de eliminación
             document.querySelectorAll('.boton-eliminar-uno').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     const index = parseInt(e.target.getAttribute('data-index'));
@@ -1957,16 +2040,13 @@
             calcularTotal();
         }
 
-        // --- FUNCIONES DE BÚSQUEDA Y FILTRO ---
         
         function obtenerTodosLosProductos() {
             const productos = [];
-            // Recorre todas las tarjetas de producto en todas las secciones para capturar el inventario completo
             document.querySelectorAll('.tarjeta-producto').forEach(tarjeta => {
                 const id = tarjeta.getAttribute('data-id');
                 
                 if (!productos.some(p => p.id === id)) {
-                     // Obtener el precio anterior de forma segura
                     let precioAnterior = '';
                     const precioAnteriorElement = tarjeta.querySelector('.precio-anterior');
                     if (precioAnteriorElement) {
@@ -2007,11 +2087,9 @@
                 resultadosBusqueda.appendChild(crearTarjetaProducto(producto));
             });
             
-            // Re-asigna listeners a los nuevos botones de carrito
             asignarListenersCarrito();
         }
         
-        // Helper: Crea una tarjeta de producto a partir de un objeto JS (usada en la función de búsqueda)
         function crearTarjetaProducto(producto) {
             const tarjeta = document.createElement('div');
             tarjeta.classList.add('tarjeta-producto');
@@ -2041,7 +2119,6 @@
             return tarjeta;
         }
 
-        // Muestra solo los 6 productos iniciales del Catálogo
         function mostrarProductosInicialesDelCatalogo() {
             const grid = document.getElementById('camisetas-grid');
             if (!grid) return;
@@ -2065,23 +2142,19 @@
             
             productos.forEach(producto => {
                 const productoFiltro = producto.getAttribute('data-filtro');
-                
-                // Muestra solo si coincide con el filtro, oculta el resto.
+
                 if (productoFiltro === filtro) {
                     producto.style.display = 'block';
                 } else {
                     producto.style.display = 'none';
                 }
             });
-            
-            // Si el filtro no tiene resultados (por si se intenta filtrar un ID inicial), 
-            // no hace falta un manejo especial ya que el usuario querría ver los resultados del filtro.
+
         }
         
         
 
         function asignarListenersCarrito() {
-            // Elimina listeners anteriores para evitar duplicados (importante para la función de búsqueda)
             document.querySelectorAll('.boton-agregar-carrito').forEach(button => {
                 button.removeEventListener('click', handleAgregarCarrito);
                 button.addEventListener('click', handleAgregarCarrito);
@@ -2111,24 +2184,17 @@
             });
         }
         
-        // Función de inicialización
         document.addEventListener('DOMContentLoaded', () => {
             
-            // 1. Inicializa variables de producto y carrito
             todosLosProductos = obtenerTodosLosProductos();
             actualizarContador();
             calcularTotal();
             
-            // 2. Asignar evento al botón de vaciar carrito
-            botonVaciarCarrito.addEventListener('click', vaciarCarrito);
             
-            // 3. Asignar evento de búsqueda
             campoBusqueda.addEventListener('input', buscarProductos);
 
-            // 4. Asigna listeners a los botones "Añadir al Carrito"
             asignarListenersCarrito();
             
-            // 5. Asignar listeners de navegación
             document.querySelectorAll('[data-page]').forEach(linkOrButton => {
                 linkOrButton.addEventListener('click', (e) => {
                     if (linkOrButton.tagName === 'A') {
@@ -2141,15 +2207,13 @@
                         cambiarPagina(paginaDestino);
                     }
 
-                    // CIERRA EL MENÚ MÓVIL
                     if (menuMovil.classList.contains('mostrar')) {
                         menuMovil.classList.remove('mostrar');
                         botonToggle.setAttribute('aria-expanded', 'false');
                     }
                 });
             });
-            
-            // 6. Asignar listeners a los botones de filtro del catálogo
+
             document.querySelectorAll('.boton-filtro, .btn-filtro').forEach(button => {
                 button.addEventListener('click', (e) => {
                     const filtro = e.target.getAttribute('data-filtro');
@@ -2158,19 +2222,63 @@
             });
 
 
-            // 7. Configuración del menú hamburguesa (toggle)
             botonToggle.addEventListener('click', () => {
                 menuMovil.classList.toggle('mostrar');
                 const isExpanded = botonToggle.getAttribute('aria-expanded') === 'true';
                 botonToggle.setAttribute('aria-expanded', !isExpanded);
             });
             
-            // 8. Mostrar la página de inicio al cargar
+
             if (!document.querySelector('.pagina.visible')) {
                 cambiarPagina('inicio'); 
             }
         });
-        
+
+
+        const btnPagar = document.getElementById('btn-pagar');
+        const formularioPago = document.getElementById('formulario-pago');
+        const totalPagar = document.getElementById('total-pagar');
+        const pagoForm = document.getElementById('pago-form');
+
+        btnPagar.addEventListener('click', () => {
+            if (carrito.length === 0) {
+                alert('Tu carrito está vacío.');
+                return;
+            }
+
+            // Mostrar formulario
+            formularioPago.style.display = 'block';
+
+            // Calcular total
+            const total = carrito.reduce((sum, item) => {
+                return sum + parseFloat(item.precio);
+                    }, 0);
+
+            totalPagar.innerText = `Total a pagar: $${total.toFixed(2)}`;
+            });
+
+            // Enviar formulario
+            pagoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const datos = {
+                nombre: document.getElementById('nombre').value,
+                email: document.getElementById('email').value,
+                direccion: document.getElementById('direccion').value,
+                telefono: document.getElementById('telefono').value,
+                carrito: carrito
+            };
+
+            console.log("Datos listos para procesar pago:", datos);
+
+            alert("Pedido confirmado. Aquí iría la integración de pago real.");
+
+            // Opcional: limpiar carrito
+            // carrito = [];
+            // guardarCarrito();
+            // renderizarCarrito();
+        });
+
     </script>
 
 </body>
