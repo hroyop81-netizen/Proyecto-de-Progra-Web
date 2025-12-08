@@ -2106,7 +2106,7 @@
                     <h3 class="nombre-producto">${producto.nombre}</h3>
                     <span class="tipo-producto">${producto.tipo}</span>
                     <div class="contenedor-precio">
-                        <span class="precio-actual" data-precio="${producto.precio}">$${parseFloat(producto.precio).toFixed(2)}</span>
+                        <span class="precio-actual" data-precio="${producto.precio}">Bs${parseFloat(producto.precio).toFixed(2)}</span>
                         ${producto.precioAnterior ? `<span class="precio-anterior">${producto.precioAnterior}</span>` : ''}
                     </div>
                     <select class="selector-talla">
@@ -2254,7 +2254,7 @@
                 return sum + parseFloat(item.precio);
                     }, 0);
 
-            totalPagar.innerText = `Total a pagar: $${total.toFixed(2)}`;
+            totalPagar.innerText = `Total a pagar: Bs${total.toFixed(2)}`;
             });
 
             // Enviar formulario
