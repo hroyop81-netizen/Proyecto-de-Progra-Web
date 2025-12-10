@@ -619,7 +619,7 @@
                 grid-template-columns: repeat(2, 1fr);
             }
             
-            /* Barra Lateral del Catálogo */
+            /* Barra Lateral del Catálogo (Tablet - visible, toma 100% ancho) */
             .contenedor-catalogo {
                 flex-direction: column; 
             }
@@ -657,12 +657,21 @@
                 max-width: 250px;
             }
             
-            /* 1. MÓVIL: Una sola columna (Lista Vertical) */
+            /* >> CORRECCIÓN MÓVIL (Camisetas y Ofertas): OCULTAR FILTROS */
+            .barra-filtros {
+                display: none; 
+            }
+            .contenedor-catalogo {
+                /* Aseguramos que el contenedor se comporte correctamente sin la barra lateral */
+                flex-direction: column; 
+            }
+            
+            /* MÓVIL: 1 columna para el grid principal */
             .grid-productos, .grid-catalogo, #resultados-busqueda {
                 grid-template-columns: 1fr;
             }
             
-            /* 2. MÓVIL: Diseño de Tarjeta (Tarjeta Horizontal) */
+            /* MÓVIL: LAYOUT DE TARJETA DE PRODUCTO (Imagen Izq - Detalles Der) */
             .tarjeta-producto {
                 display: flex;
                 flex-direction: row;
@@ -750,6 +759,8 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+            /* >> CORRECCIÓN: Centra los elementos hijos horizontalmente */
+            align-items: center; 
         }
 
         /* Inputs */
@@ -788,6 +799,9 @@
             font-weight: bold;
             cursor: pointer;
             transition: 0.2s ease-in-out;
+            /* >> CORRECCIÓN: Limita el ancho del botón para que el centrado sea visible */
+            width: 100%; 
+            max-width: 300px; 
         }
 
         #pago-form button:hover {
